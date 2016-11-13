@@ -2,9 +2,8 @@
 #include <GLUT/GLUT.h>
 #pragma once
 
-//3DObject類の基底クラス。
-//3DObjectを作るときは継承してね
-//表:表ABS:ObjectABSがおすすめ
+/*3DObject類の基底クラス。
+ 3DObjectを作るときは継承 */
 class ObjectAbs{
 public:
 		virtual void setForm(float w, float d, float h) = 0;

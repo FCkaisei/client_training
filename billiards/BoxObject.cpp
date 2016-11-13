@@ -3,7 +3,9 @@
 #include <vector>
 #include <cmath>
 #include "objectAbstract.cpp"
-
+/*
+ 四角形のObjectを作る際に継承
+ */
 class BoxObject : public ObjectAbs{
 public:
     

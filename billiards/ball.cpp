@@ -14,38 +14,25 @@ private:
     
 public:
     double power = 0;
-    //方向を含めたpower
     GLfloat vector[3] = { 0.0,0.0,0.0 };
     GLfloat color[4] = {1.0,1.0,1.0,1.0};
     
-    void SetId(int id){
+    //玉の番号を付与
+    void setId(int id){
         m_id = id;
     }
     
-    void SetColor(float R,float G,float B,float A){
+    //色を付与
+    void setColor(float R,float G,float B,float A){
         color[0] = R;
         color[1] = G;
         color[2] = B;
         color[3] = A;
     }
     
-    void GetColor(GLfloat *p){
-        *p = color[0];
-        ++p;
-        *p = color[1];
-        ++p;
-        *p = color[2];
-        ++p;
-        *p = color[3];
-    }
-    
     double pow(double p){
         p = p*p;
         return p;
-    }
-    
-    void setID(int i){
-        m_id = i;
     }
     
     void setPower(double d){
@@ -57,7 +44,7 @@ public:
     }
     
     //方向を決めて値を入れる
-    void setProPower(GLfloat uni[]){
+    void setVectorPower(GLfloat uni[]){
         vector[0] = (float)(uni[0]*power);
         vector[1] = (float)(uni[1]*power);
         vector[2] = (float)(uni[2]*power);
@@ -110,24 +97,24 @@ public:
         getForm(p_form2);
         
         //left
-        if(p_position2[0]<0.0 &&p_position2[2]<m_BoxHeight){
-            setPosition(0.1,p_position2[1],p_position2[2]);
-            setPositionPro(-vector[0],vector[1],vector[2]);
+        if(p_position2[0] < 0.0 && p_position2[2] < m_BoxHeight){
+            setPosition(0.1, p_position2[1], p_position2[2]);
+            setPositionPro(-vector[0], vector[1], vector[2]);
         }
         //down
         if(p_position2[0] < m_BoxWidth && p_position2[2]<0.0){
-            setPosition(p_position2[0],p_position2[1],0.1);
-            setPositionPro(vector[0],vector[1],-vector[2]);
+            setPosition(p_position2[0], p_position2[1], 0.1);
+            setPositionPro(vector[0], vector[1], -vector[2]);
         }
         //right
-        if(p_position2[0] > m_BoxWidth &&p_position2[2]<m_BoxHeight){
-            setPosition(29.9,p_position2[1],p_position2[2]);
-            setPositionPro(-vector[0],vector[1],vector[2]);
+        if(p_position2[0] > m_BoxWidth && p_position2[2] < m_BoxHeight){
+            setPosition(29.9, p_position2[1], p_position2[2]);
+            setPositionPro(-vector[0], vector[1], vector[2]);
         }
         //up
         if(p_position2[0] < m_BoxWidth && p_position2[2]>m_BoxHeight){
-            setPosition(p_position2[0],p_position2[1],14.9);
-            setPositionPro(vector[0],vector[1],-vector[2]);
+            setPosition(p_position2[0], p_position2[1], 14.9);
+            setPositionPro(vector[0], vector[1], -vector[2]);
         }
     }
     

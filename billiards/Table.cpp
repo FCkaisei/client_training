@@ -3,16 +3,13 @@
 #include <map>
 #include "objectAbstract.cpp"
 #include "BoxObject.cpp"
-#include "HallObject.cpp"
+#include "PocketObject.cpp"
 #pragma once
 using namespace std;
-//3DObject類の基底クラス。
-//3DObjectを作るときは継承してね
-//表:表ABS:ObjectABSがおすすめ
 class Table{
 public:
-    HallObject hall1,hall2,hall3,hall4,hall5,hall6;
-    HallObject hall[6] = {hall1, hall2, hall3, hall4, hall5, hall6 };
+    PocketObject hall1,hall2,hall3,hall4,hall5,hall6;
+    PocketObject hall[6] = {hall1, hall2, hall3, hall4, hall5, hall6 };
     
     BoxObject tableBase,boxObject1,boxObject2,boxObject3,boxObject4,boxObject5,boxObject6;
     BoxObject box[7] = {tableBase,boxObject1,boxObject2, boxObject3, boxObject4,boxObject5,boxObject6};

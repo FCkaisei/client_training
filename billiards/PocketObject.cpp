@@ -3,7 +3,7 @@
 #include <vector>
 #include <cmath>
 #include "objectAbstract.cpp"
-class HallObject : public ObjectAbs{
+class PocketObject : public ObjectAbs{
 public:
     
     int face[6][4] = {

@@ -5,9 +5,10 @@
 #include <vector>
 #include <cmath>
 #include <math.h>
+
 #include "ColorObject.cpp"
 #include "Table.cpp"
-#include "SixBall.cpp"
+#include "NineBall.cpp"
 #include "KumaEngine.cpp"
 #include "GameManager.cpp"
 
@@ -20,13 +21,13 @@ GLfloat unitVec[] = { 0.0,0.0,0.0 };
 double r = 0; /* 回転角 */
 double rcos;
 double rsin;
-double power = 0;
+double shotPower = 0;
 
 void idle(void){
   glutPostRedisplay();
 }
 
-//カメラの設定を行っています
+//カメラの設定を行っています(玉が止まっているとき)
 void createView(){
     gluLookAt(
               (float)p_position[0]+rsin, 3.0, (float)p_position[2]+rcos,
@@ -34,7 +35,7 @@ void createView(){
               0.0, 1.0, 0.0);
 }
 
-//カメラの設定
+//カメラの設定(弾が動いているとき)
 void createView(GLfloat gl[]){
     gluLookAt(gl[0],gl[1],gl[2],
               15.0, 1.0, 7.5,
@@ -44,12 +45,11 @@ void createView(GLfloat gl[]){
 
 //ゲームのステートを変更します。
 void gameState(){
-    //ここはステート処理にしたい。だから外部にカメラをステートで管理するクラスをセットしようね。
-    //全ての弾が止まったらカメラモードを変更　っていうか、弾が止まる操作不能にする必要がある
-    GLfloat hoge2[] = {0.0,1.0,0.0};
-    sixball.ball[0].getVec(hoge2);
+    //全ての弾が止まったらカメラモードを変更
+    GLfloat ballVec[] = {0.0,0.0,0.0};
+    sixball.ball[0].getVec(ballVec);
     
-    if((hoge2[0] < 0.001 && hoge2[0] > -0.001) || (hoge2[2] < 0.001 && hoge2[2] > -0.001)){
+    if((ballVec[0] < 0.001 && ballVec[0] > -0.001) || (ballVec[2] < 0.001 && ballVec[2] > -0.001)){
         GameManager::setPlayerOperationState(PlayerOperationState::WAIT);
     }
     
@@ -57,8 +57,8 @@ void gameState(){
         createView();
     }
     else{
-        GLfloat hoge[] = {0.0,60.0,0.0};
-        createView(hoge);
+        GLfloat cameraPosition[] = {0.0,60.0,0.0};
+        createView(cameraPosition);
     }
 }
 
@@ -77,37 +77,44 @@ double pow(double p){
     return p;
 }
 
-//土台の作成
-void createObj(){
-    //クラスに分けるとりあえずこのまま　落ち着いたら変えよう
+
+//土台の生成
+void createTable(){
     table.SetTable();
+    
+    //土台を作る
     for(int i = 0; i < 7; i++){
         glPushMatrix();
         glMaterialfv(GL_FRONT, GL_DIFFUSE, table.box[i].color);
         table.box[i].Draw();
         glPopMatrix();
     }
-    for(int i = 0; i < 6; i++){
-        glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, table.hall[i].color);
-        table.hall[i].Draw();
-        glPopMatrix();
-    }
     
+	//ポケットを作る。（未完)
+//    for(int i = 0; i < 6; i++){
+//        glPushMatrix();
+//        glMaterialfv(GL_FRONT, GL_DIFFUSE, table.hall[i].color);
+//        table.hall[i].Draw();
+//        glPopMatrix();
+//    }
 }
+
+
 //衝突時の値変動
 void collision(BallObject &ballObj,BallObject &ballObj2){
     
     GLfloat formerBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
-    ballObj.setProPower(formerBallVector);
+    ballObj.setVectorPower(formerBallVector);
     GLfloat supplierBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
     
     //衝突先のたまにベクトルを渡す
     double power;
     ballObj.getPower(power);
     ballObj2.setPower(power);
-    ballObj2.setProPower(supplierBallVector);
+    ballObj2.setVectorPower(supplierBallVector);
 }
+
+
 //衝突判定
 void hitJudgment(int i, int j){
     if(i != j){
@@ -145,6 +152,8 @@ void hitJudgment(int i, int j){
         }
     }
 }
+
+
 //9つのボールを生成します
 void  createNineBall(void){
     for(int i = 0; i < 9; i++){
@@ -174,6 +183,7 @@ void  createNineBall(void){
     }
 }
 
+
 //再描写時に実行される関数
 void display(void){
     //特定の色で指定バッファを削除する
@@ -182,38 +192,27 @@ void display(void){
     rcos = cos(r)*15;
     rsin = sin(r)*15;
     sixball.ball[0].getPosition(p_position);
-    
     //gameStateを管理する予定
     gameState();
-	
     //Lightを生成
     createLight();
-    
     //土台生成
-    createObj();
-    
+    createTable();
     //9ボールを生成します(当たり判定もしちゃってるで確認)
     createNineBall();
-    
 	//実際に描画します
     glFlush();
-    
-    
 }
 
 
-
+//ウィンドウの比率の固定などに利用
 void resize(int w, int h){
-    /* 一周回ったら回転角を 0 に戻す */
-    if (r >= 360){
-        r = 0;
-    }
 	glViewport(0,0,w,h);
-	/* 透視変換行列の設定 */
+	//透視変換行列の設定
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(30.0f, (float)w / (float)h, 1.0f, 100.0f);
-	/* モデルビュー変換行列の設定 */
+	//モデルビュー変換行列の設定
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(3.0f, 4.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
@@ -238,11 +237,9 @@ void key(unsigned char key, int x, int y){
 		case 'e':
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                 GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
-                power = 1.2f;
-                for(int i = 0; i < 1; i++){
-                	sixball.ball[i].setPower(power);
-                	sixball.ball[i].setProPower(unitVec);
-                }
+                shotPower = 1.2f;
+                sixball.ball[0].setPower(shotPower);
+                sixball.ball[0].setVectorPower(unitVec);
             }
             break;
 

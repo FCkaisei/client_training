@@ -2,10 +2,9 @@
 #include <GLUT/GLUT.h>
 #include "ball.cpp"
 
-
-//3DObject類の基底クラス。
-//3DObjectを作るときは継承してね
-//表:表ABS:ObjectABSがおすすめ
+/*
+ 9ボール生成用のクラス.ballを管理
+ */
 class SixBall{
 public:
     BallObject ballObject1,ballObject2,ballObject3,ballObject4,ballObject5,ballObject6,ballObject7,ballObject8,ballObject9;
@@ -50,10 +49,10 @@ public:
     
     SixBall(){
         for(int i = 0; i<9; i++){
-            ball[i].SetId(i);
+            ball[i].setId(i);
             ball[i].setForm(0.5f,16.0f,16.0f);
             ball[i].setPosition(ballPositionArray[i][0],ballPositionArray[i][1],ballPositionArray[i][2]);
-            ball[i].SetColor(colorArray[i][0],colorArray[i][1],colorArray[i][2],colorArray[i][3]);
+            ball[i].setColor(colorArray[i][0],colorArray[i][1],colorArray[i][2],colorArray[i][3]);
         }
     }
 };

@@ -8,7 +8,6 @@ class BallAbstract: public ObjectAbs{
     
 public:
     
-    virtual void setID(int i) = 0;
     
     virtual void setPower(double d) = 0;
     

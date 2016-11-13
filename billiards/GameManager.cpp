@@ -1,3 +1,7 @@
+/*
+ ゲームの状態を管理
+ */
+
 enum class PlayerOperationState{
     NONE,
     SHOT,
@@ -8,6 +12,7 @@ class GameManager{
 private:
     GameManager();
     static PlayerOperationState p_OperationState;
+    
 public:
 
     static PlayerOperationState getPlayerOperationState(){
