@@ -57,9 +57,6 @@ public:
         vector[0] = (float)(uni[0]*power);
         vector[1] = (float)(uni[1]*power);
         vector[2] = (float)(uni[2]*power);
-        if(m_id == 7){
-            printf("id:%i_vecX:%f_vecY:%f_vecZ:%f_power:%f\n",m_id,vector[0],vector[1],vector[2],power);
-        }
     }
     
     void Physics(){

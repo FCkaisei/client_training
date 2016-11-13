@@ -96,6 +96,36 @@ void createObj(){
     
 }
 
+void hitJudgment(int i, int j){
+    //if(i == 0){
+    if(i != j){
+        GLfloat p_position2[] = { 0.0,0.0,0.0 };
+        GLfloat p_form2[] = { 0.0,0.0,0.0 };
+        
+        sixball.ball[j].getPosition(p_position2);
+        sixball.ball[j].getForm(p_form2);
+        float ballX = abs(sixball.ball[i].vector[0]);
+        float ballZ = abs(sixball.ball[i].vector[2]);
+        printf("ballX%f,ballZ%f\n",ballX,ballZ);
+        if(ballX > 0.0001f && ballZ > 0.0001f){
+        	//衝突判定
+        	if(pow(sixball.ball[i].positionX - p_position2[0]) + pow(sixball.ball[i].positionY - p_position2[1]) + pow(sixball.ball[i].positionZ - p_position2[2]) <= pow(sixball.ball[i].width + p_form2[0])){
+                
+            	printf("%s","!!衝突!!");
+            	GLfloat formerBallVector[3] = {-sixball.ball[i].vector[0], sixball.ball[i].vector[1], -sixball.ball[i].vector[2]};
+            	//ボールが衝突したときにパワーを衝突先のたまに渡す。その時若干減速させる
+            	//sixball.ball[i].power = sixball.ball[i].power * 0.99f;
+            	sixball.ball[i].setProPower(formerBallVector);
+            	GLfloat supplierBallVector[3] = {-sixball.ball[i].vector[0], sixball.ball[i].vector[1], -sixball.ball[i].vector[2]};
+            	//衝突先のたまにベクトルを渡す
+            	sixball.ball[j].power = sixball.ball[i].power;
+            	sixball.ball[j].setProPower(supplierBallVector);
+        	}
+        }
+    //}
+    }
+}
+
 //9つのボールを生成します
 void  createNineBall(void){
     for(int i = 0; i < 9; i++){
@@ -113,37 +143,13 @@ void  createNineBall(void){
         //壁当たり判定チェック
         sixball.ball[i].collisionDetectionBox();
         
-        //弾の数だけ弾通しの当たり判定チェック
-        for(int j = 0; j < 9; j++){
-            if(i == 0){
-            	if(i != j){
-                    GLfloat p_position2[] = { 0.0,0.0,0.0 };
-                    GLfloat p_form2[] = { 0.0,0.0,0.0 };
-                    sixball.ball[j].getPosition(p_position2);
-                    sixball.ball[j].getForm(p_form2);
-                    
-                    if(pow(sixball.ball[i].positionX - p_position2[0])+
-                       pow(sixball.ball[i].positionY - p_position2[1])+
-                       pow(sixball.ball[i].positionZ - p_position2[2]) <= pow(sixball.ball[i].width + p_form2[0])){
-
-                        printf("%s","衝突");
-                        GLfloat u[3] = {-sixball.ball[i].vector[0], sixball.ball[i].vector[1], -sixball.ball[i].vector[2]};
-                        sixball.ball[i].setProPower(u);
-                        GLfloat u2[3] = {-sixball.ball[i].vector[0], sixball.ball[i].vector[1], -sixball.ball[i].vector[2]};
-                        
-                        sixball.ball[j].power = sixball.ball[i].power;
-                        sixball.ball[j].setProPower(u2);
-                    }
-            	}
-            }
+        //弾の数だけ弾同士の当たり判定チェック
+        for(int j = i; j < 9; j++){
+			hitJudgment(i,j);
         }
-        
-        //ポジションをセットする
         sixball.ball[i].setPosition();
-        
-        //描画
-        sixball.ball[i].Draw();
         sixball.ball[i].Physics();
+        sixball.ball[i].Draw();
         glPopMatrix();
     }
 }
@@ -166,7 +172,7 @@ void display(void){
     //土台生成
     createObj();
     
-    //9ボールを生成します
+    //9ボールを生成します(当たり判定もしちゃってるで確認)
     createNineBall();
     
 	//実際に描画します
