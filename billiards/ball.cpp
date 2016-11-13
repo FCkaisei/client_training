@@ -54,6 +54,7 @@ public:
     
     //方向を決めて値を入れる
     void setProPower(GLfloat uni[]){
+        printf("power:%f",power);
         vector[0] = (float)(uni[0]*power);
         vector[1] = (float)(uni[1]*power);
         vector[2] = (float)(uni[2]*power);
@@ -63,7 +64,6 @@ public:
         vector[0] =vector[0]*0.98;
         vector[1] =vector[1]*0.98;
         vector[2] =vector[2]*0.98;
-        //power = power*0.98;
     }
     
     void setPosition(){

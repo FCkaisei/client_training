@@ -96,33 +96,44 @@ void createObj(){
     
 }
 
+void collision(BallObject &ballObj,BallObject &ballObj2){
+        printf("%s","!!衝突!!");
+        GLfloat formerBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
+        //ボールが衝突したときにパワーを衝突先のたまに渡す。その時若干減速させる
+        ballObj.power = ballObj.power * 0.85f;
+        ballObj.setProPower(formerBallVector);
+        GLfloat supplierBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
+        //衝突先のたまにベクトルを渡す
+        ballObj2.power = ballObj.power;
+        ballObj2.setProPower(supplierBallVector);
+}
+
 void hitJudgment(int i, int j){
     //if(i == 0){
     if(i != j){
-        GLfloat p_position2[] = { 0.0,0.0,0.0 };
-        GLfloat p_form2[] = { 0.0,0.0,0.0 };
-        
-        sixball.ball[j].getPosition(p_position2);
-        sixball.ball[j].getForm(p_form2);
+
         float ballX = abs(sixball.ball[i].vector[0]);
         float ballZ = abs(sixball.ball[i].vector[2]);
-        printf("ballX%f,ballZ%f\n",ballX,ballZ);
-        if(ballX > 0.0001f && ballZ > 0.0001f){
-        	//衝突判定
-        	if(pow(sixball.ball[i].positionX - p_position2[0]) + pow(sixball.ball[i].positionY - p_position2[1]) + pow(sixball.ball[i].positionZ - p_position2[2]) <= pow(sixball.ball[i].width + p_form2[0])){
-                
-            	printf("%s","!!衝突!!");
-            	GLfloat formerBallVector[3] = {-sixball.ball[i].vector[0], sixball.ball[i].vector[1], -sixball.ball[i].vector[2]};
-            	//ボールが衝突したときにパワーを衝突先のたまに渡す。その時若干減速させる
-            	//sixball.ball[i].power = sixball.ball[i].power * 0.99f;
-            	sixball.ball[i].setProPower(formerBallVector);
-            	GLfloat supplierBallVector[3] = {-sixball.ball[i].vector[0], sixball.ball[i].vector[1], -sixball.ball[i].vector[2]};
-            	//衝突先のたまにベクトルを渡す
-            	sixball.ball[j].power = sixball.ball[i].power;
-            	sixball.ball[j].setProPower(supplierBallVector);
+        float ballX2 = abs(sixball.ball[j].vector[0]);
+        float ballZ2 = abs(sixball.ball[j].vector[2]);
+        GLfloat p_position2[] = { 0.0,0.0,0.0 };
+        GLfloat p_form2[] = { 0.0,0.0,0.0 };
+        sixball.ball[j].getPosition(p_position2);
+        sixball.ball[j].getForm(p_form2);
+        //衝突判定
+        if(pow(sixball.ball[i].positionX - p_position2[0]) + pow(sixball.ball[i].positionY - p_position2[1]) + pow(sixball.ball[i].positionZ - p_position2[2]) <= pow(sixball.ball[i].width + p_form2[0])){
+            //物理定期な計算（ベクトルの分散など)は他のシステムが全て完成してから非常勤の物理教授に質問)
+        	if(ballX+ballZ > ballX2+ballZ2){
+        		if(ballX > 0.0001f || ballZ > 0.0001f){
+               	 collision(sixball.ball[i],sixball.ball[j]);
+            	}
+        	}
+        	else{
+        		if(ballX2 > 0.0001f || ballZ2 > 0.0001f){
+            		collision(sixball.ball[j],sixball.ball[i]);
+            	}
         	}
         }
-    //}
     }
 }
 
