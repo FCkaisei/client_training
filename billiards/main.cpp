@@ -13,7 +13,6 @@
 
 Table table;
 SixBall sixball;
-BallObject ballObj1;
 ColorObject colorObject;
 PlayerOperationState GameManager::p_OperationState;
 GLfloat p_position[] = { 0.0,0.0,0.0 };
@@ -23,39 +22,47 @@ double rcos;
 double rsin;
 double power = 0;
 
-double pow(double p){
-    p = p*p;
-    return p;
-}
-
 void idle(void){
   glutPostRedisplay();
 }
 
-//Viewの設定をしますここで全部設定しちゃえ
+//カメラの設定を行っています
 void createView(){
-    /* 視点位置と視線方向 */
     gluLookAt(
               (float)p_position[0]+rsin, 3.0, (float)p_position[2]+rcos,
               (float)p_position[0], 0.0, (float)p_position[2],
               0.0, 1.0, 0.0);
 }
 
+//カメラの設定
 void createView(GLfloat gl[]){
-    /* 視点位置と視線方向 */
-    
-    /*
-     カメラの位置（視点）のX位置を指定します。
-     カメラが見ているところ（注視点）のX位置を指定します。
-     カメラの上方向がX軸に対してどれくらいかを指定します。
-     */
     gluLookAt(gl[0],gl[1],gl[2],
               15.0, 1.0, 7.5,
               0.0,3.0,0.0
     );
 }
 
-//光の設定全部個々でやっちゃえ！
+//ゲームのステートを変更します。
+void gameState(){
+    //ここはステート処理にしたい。だから外部にカメラをステートで管理するクラスをセットしようね。
+    //全ての弾が止まったらカメラモードを変更　っていうか、弾が止まる操作不能にする必要がある
+    GLfloat hoge2[] = {0.0,1.0,0.0};
+    sixball.ball[0].getVec(hoge2);
+    
+    if((hoge2[0] < 0.001 && hoge2[0] > -0.001) || (hoge2[2] < 0.001 && hoge2[2] > -0.001)){
+        GameManager::setPlayerOperationState(PlayerOperationState::WAIT);
+    }
+    
+    if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
+        createView();
+    }
+    else{
+        GLfloat hoge[] = {0.0,60.0,0.0};
+        createView(hoge);
+    }
+}
+
+//Lightの設定
 void createLight(){
     /* 光源の位置設定 */
     GLfloat light0pos[] = { 0.0, 3.0, 5.0, 1.0 };
@@ -65,7 +72,12 @@ void createLight(){
     
 }
 
-//Objectの描画
+double pow(double p){
+    p = p*p;
+    return p;
+}
+
+//土台の作成
 void createObj(){
     //クラスに分けるとりあえずこのまま　落ち着いたら変えよう
     table.SetTable();
@@ -81,95 +93,96 @@ void createObj(){
         table.hall[i].Draw();
         glPopMatrix();
     }
-    glFlush();
+    
 }
 
-/*
- camera
- Light
- object
- */
-void display(void){
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-    
-    rcos = cos(r)*15;
-    rsin = sin(r)*15;
-    ballObj1.getPosition(p_position);
-    GLfloat cameraPosition[] = {(float)(p_position[0]+rsin), 0.0, (float)(p_position[2]+rcos)};
-    
-    //ここはステート処理にしたい。だから外部にカメラをステートで管理するクラスをセットしようね。
-    //全ての弾が止まったらカメラモードを変更　っていうか、弾が止まる操作不能にする必要がある
-    GLfloat hoge2[] = {0.0,1.0,0.0};
-    ballObj1.getVec(hoge2);
-    
-    if((hoge2[0] < 0.001 && hoge2[0] > -0.001) || (hoge2[2] < 0.001 && hoge2[2] > -0.001)){
-        GameManager::setPlayerOperationState(PlayerOperationState::WAIT);
-    }
-    
-    if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-        createView();
-    }
-    else{
-        GLfloat hoge[] = {0.0,60.0,0.0};
-        createView(hoge);
-    }
-    //LENGHTのとり方を検索しとけ
+//9つのボールを生成します
+void  createNineBall(void){
     for(int i = 0; i < 9; i++){
-        glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, sixball.ball[i].color);
-        sixball.ball[i].getPosition(p_position);
-        sixball.ball[i].setPosition((float)(p_position[0]),(float)(p_position[1]),(float)(p_position[2]));
-        sixball.ball[i].collisionDetectionBox();
-        sixball.ball[i].Physics();
-        for(int j = 0; j < 9; j++){
-            if(i != j){
-                sixball.ball[i].collisionDetection(sixball.ball[j]);
-            }
-            if(i == j){
-                ballObj1.collisionDetection(sixball.ball[j]);
-            }
-            
+        if(i == 0){
+            GLfloat cameraPosition[] = {(float)(p_position[0]+rsin), 0.0, (float)(p_position[2]+rcos)};
+            //単位ベクトルの取得
+            KumaEngine::UnitVector(p_position, cameraPosition, unitVec);
         }
+        
+        glPushMatrix();
+        
+        //色決め
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, sixball.ball[i].color);
+        
+        //壁当たり判定チェック
+        sixball.ball[i].collisionDetectionBox();
+        
+        //弾の数だけ弾通しの当たり判定チェック
+        for(int j = 0; j < 9; j++){
+            if(i == 0){
+            	if(i != j){
+                    GLfloat p_position2[] = { 0.0,0.0,0.0 };
+                    GLfloat p_form2[] = { 0.0,0.0,0.0 };
+                    sixball.ball[j].getPosition(p_position2);
+                    sixball.ball[j].getForm(p_form2);
+                    
+                    if(pow(sixball.ball[i].positionX - p_position2[0])+
+                       pow(sixball.ball[i].positionY - p_position2[1])+
+                       pow(sixball.ball[i].positionZ - p_position2[2]) <= pow(sixball.ball[i].width + p_form2[0])){
+
+                        printf("%s","衝突");
+                        GLfloat u[3] = {-sixball.ball[i].vector[0], sixball.ball[i].vector[1], -sixball.ball[i].vector[2]};
+                        sixball.ball[i].setProPower(u);
+                        GLfloat u2[3] = {-sixball.ball[i].vector[0], sixball.ball[i].vector[1], -sixball.ball[i].vector[2]};
+                        
+                        sixball.ball[j].power = sixball.ball[i].power;
+                        sixball.ball[j].setProPower(u2);
+                    }
+            	}
+            }
+        }
+        
+        //ポジションをセットする
+        sixball.ball[i].setPosition();
+        
+        //描画
         sixball.ball[i].Draw();
+        sixball.ball[i].Physics();
         glPopMatrix();
     }
-    
-    
-    /* 球の図形の描画 */
-    glPushMatrix();
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, colorObject.white);
-    
-    //単位ベクトルの取得
-    KumaEngine::UnitVector(p_position, cameraPosition, unitVec);
-    
-    ballObj1.getPosition(p_position);
-    //positionをセット
-    ballObj1.setPosition((float)(p_position[0]),(float)(p_position[1]),(float)(p_position[2]));
-    ballObj1.collisionDetectionBox();
-    //衝突判定
-    ballObj1.collisionDetection(sixball.ball[2]);
-    
-    //描画
-    ballObj1.Draw();
-    
-    //次の動作時減速するよ
-    ballObj1.Physics();
-    glPopMatrix();
-    createLight();
-    createObj();
 }
+
+//再描写時に実行される関数
+void display(void){
+    //特定の色で指定バッファを削除する
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+    rcos = cos(r)*15;
+    rsin = sin(r)*15;
+    sixball.ball[0].getPosition(p_position);
+    
+    //gameStateを管理する予定
+    gameState();
+	
+    //Lightを生成
+    createLight();
+    
+    //土台生成
+    createObj();
+    
+    //9ボールを生成します
+    createNineBall();
+    
+	//実際に描画します
+    glFlush();
+    
+    
+}
+
 
 
 void resize(int w, int h){
-    
     /* 一周回ったら回転角を 0 に戻す */
     if (r >= 360){
         r = 0;
     }
-    
 	glViewport(0,0,w,h);
-
 	/* 透視変換行列の設定 */
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -181,7 +194,7 @@ void resize(int w, int h){
 }
 
 
-
+//キーボード入力を管理
 void key(unsigned char key, int x, int y){
 	switch (key) {
 		case 'q':
@@ -200,27 +213,23 @@ void key(unsigned char key, int x, int y){
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                 GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
                 power = 1.2f;
-                ballObj1.setPower(power);
-                ballObj1.setProPower(unitVec);
-                for(int i = 0; i< 9; i++){
-                    sixball.ball[i].setPower(power);
-                    sixball.ball[i].setProPower(unitVec);
+                for(int i = 0; i < 1; i++){
+                	sixball.ball[i].setPower(power);
+                	sixball.ball[i].setProPower(unitVec);
                 }
             }
             break;
 
   		default:
-		//glutIdleFunc(0);
     		break;
 		}
 }
 
 
-
-void init(void)
-{
-    ballObj1.setForm(0.5f,16.0f,16.0f);
-    ballObj1.setPosition(7.5,0.0,7.5);
+//初期化
+void init(void){
+    sixball.ball[0].setForm(0.5f,16.0f,16.0f);
+    sixball.ball[0].setPosition(7.5,0.0,7.5);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_FRONT);
@@ -231,15 +240,15 @@ void init(void)
     glLightfv(GL_LIGHT1, GL_SPECULAR, colorObject.white);
 }
 
-int main(int argc, char *argv[])
-{
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH);
-  glutCreateWindow(argv[0]);
-  glutDisplayFunc(display);
-  glutReshapeFunc(resize);
-  glutKeyboardFunc(key);
-  init();
-  glutMainLoop();
-  return 0;
+//メインスレッド
+int main(int argc, char *argv[]){
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH);
+    glutCreateWindow(argv[0]);
+  	glutDisplayFunc(display);
+  	glutReshapeFunc(resize);
+  	glutKeyboardFunc(key);
+  	init();
+  	glutMainLoop();
+  	return 0;
 }

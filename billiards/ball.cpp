@@ -9,15 +9,15 @@
 class BallObject : public BallAbstract{
 private:
     int m_id = 0;
-    double power;
-    GLfloat vector[3] = { 0.0,0.0,0.0 };
-    GLfloat unitVector[3] = { 0.0,0.0,0.0 };
+
     double m_BoxHeight = 15;
     double m_BoxWidth = 30;
     
 public:
+    double power = 0;
+    //方向を含めたpower
+    GLfloat vector[3] = { 0.0,0.0,0.0 };
     GLfloat color[4] = {1.0,1.0,1.0,1.0};
-    
     void SetId(int id){
         m_id = id;
     }
@@ -52,31 +52,27 @@ public:
         power = d;
     }
     
+    //方向を決めて値を入れる
     void setProPower(GLfloat uni[]){
-        unitVector[0] = uni[0];
-        unitVector[1] = uni[1];
-        unitVector[2] = uni[2];
         vector[0] = (float)(uni[0]*power);
         vector[1] = (float)(uni[1]*power);
         vector[2] = (float)(uni[2]*power);
+        if(m_id == 7){
+            printf("id:%i_vecX:%f_vecY:%f_vecZ:%f_power:%f\n",m_id,vector[0],vector[1],vector[2],power);
+        }
     }
     
     void Physics(){
         vector[0] =vector[0]*0.98;
         vector[1] =vector[1]*0.98;
         vector[2] =vector[2]*0.98;
+        //power = power*0.98;
     }
     
-    void Vector(GLfloat uni[]){
-        unitVector[0] = uni[0];
-        unitVector[1] = uni[1];
-        unitVector[2] = uni[2];
-    }
-    
-    void setPosition(float x, float y, float z){
-        positionX = x+vector[0];
-        positionY = y+vector[1];
-        positionZ = z+vector[2];
+    void setPosition(){
+        positionX = positionX+vector[0];
+        positionY = positionY+vector[1];
+        positionZ = positionZ+vector[2];
     }
     
     void setPositionPro(float x, float y, float z){
@@ -91,6 +87,13 @@ public:
         *p = vector[1];
         ++p;
         *p = vector[2];
+    }
+    
+    void setPosition(float x, float y, float z){
+
+        positionX = x+vector[0];
+        positionY = y+vector[1];
+        positionZ = z+vector[2];
     }
     
     
@@ -121,22 +124,6 @@ public:
         if(p_position2[0] < m_BoxWidth && p_position2[2]>m_BoxHeight){
             setPosition(p_position2[0],p_position2[1],14.9);
             setPositionPro(vector[0],vector[1],-vector[2]);
-        }
-    }
-    
-    
-    void collisionDetection(BallObject b){
-        GLfloat p_position2[] = { 0.0,0.0,0.0 };
-        GLfloat p_form2[] = { 0.0,0.0,0.0 };
-        b.getPosition(p_position2);
-        b.getForm(p_form2);
-        
-        if(pow(positionX - p_position2[0]) + pow(positionY - p_position2[1]) + pow(positionZ - p_position2[2]) <= pow(width + p_form2[0])){
-            printf("%x\n", m_id);
-            setPower(1.2f);
-            GLfloat u[3] = {-vector[0], vector[1], -vector[2]};
-            setProPower(u);
-
         }
     }
 };

@@ -12,6 +12,7 @@ public:
     
     virtual void setPower(double d) = 0;
     
+    virtual void setPosition(float x, float y, float z) = 0;
     void setForm(float w, float d, float h){
         width = w;
         depth = d;
@@ -35,17 +36,11 @@ public:
         *p = positionZ;
     }
     
-    void setPosition(float x, float y, float z){
-        positionX = x;
-        positionY = y;
-        positionZ = z;
-    }
     void Draw(void){
         glTranslatef(positionX,positionY,positionZ);
         glutSolidSphere(width,depth,height);
     }
     
-protected:
     float positionX = 0;
     float positionY = 0;
     float positionZ = 0;

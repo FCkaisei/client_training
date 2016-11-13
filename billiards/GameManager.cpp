@@ -1,5 +1,3 @@
-
-
 enum class PlayerOperationState{
     NONE,
     SHOT,
