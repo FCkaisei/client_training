@@ -95,53 +95,62 @@ void createObj(){
     }
     
 }
-
+//衝突時の値変動
 void collision(BallObject &ballObj,BallObject &ballObj2){
-        printf("%s","!!衝突!!");
-        GLfloat formerBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
-        //ボールが衝突したときにパワーを衝突先のたまに渡す。その時若干減速させる
-        ballObj.power = ballObj.power * 0.85f;
-        ballObj.setProPower(formerBallVector);
-        GLfloat supplierBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
-        //衝突先のたまにベクトルを渡す
-        ballObj2.power = ballObj.power;
-        ballObj2.setProPower(supplierBallVector);
+    
+    GLfloat formerBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
+    ballObj.setProPower(formerBallVector);
+    GLfloat supplierBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
+    
+    //衝突先のたまにベクトルを渡す
+    double power;
+    ballObj.getPower(power);
+    ballObj2.setPower(power);
+    ballObj2.setProPower(supplierBallVector);
 }
-
+//衝突判定
 void hitJudgment(int i, int j){
-    //if(i == 0){
     if(i != j){
-
-        float ballX = abs(sixball.ball[i].vector[0]);
-        float ballZ = abs(sixball.ball[i].vector[2]);
-        float ballX2 = abs(sixball.ball[j].vector[0]);
-        float ballZ2 = abs(sixball.ball[j].vector[2]);
+        double power;
+        double power2;
+        sixball.ball[i].getPower(power);
+        sixball.ball[j].getPower(power2);
         GLfloat p_position2[] = { 0.0,0.0,0.0 };
         GLfloat p_form2[] = { 0.0,0.0,0.0 };
         sixball.ball[j].getPosition(p_position2);
         sixball.ball[j].getForm(p_form2);
+        
         //衝突判定
         if(pow(sixball.ball[i].positionX - p_position2[0]) + pow(sixball.ball[i].positionY - p_position2[1]) + pow(sixball.ball[i].positionZ - p_position2[2]) <= pow(sixball.ball[i].width + p_form2[0])){
-            //物理定期な計算（ベクトルの分散など)は他のシステムが全て完成してから非常勤の物理教授に質問)
-        	if(ballX+ballZ > ballX2+ballZ2){
-        		if(ballX > 0.0001f || ballZ > 0.0001f){
-               	 collision(sixball.ball[i],sixball.ball[j]);
+            
+            //powerが強い側に従って玉移動
+            if(power > power2){
+        		if(power > 0){
+               	 	collision(sixball.ball[i],sixball.ball[j]);
+                    printf("%s","Win");
             	}
         	}
-        	else{
-        		if(ballX2 > 0.0001f || ballZ2 > 0.0001f){
+        	else if(power < power2){
+        		if(power2 > 0){
+                    printf("%s","Lose");
             		collision(sixball.ball[j],sixball.ball[i]);
             	}
         	}
+            else if (power == power2){
+				if(power > 0){
+                    printf("%s","Draw");
+                    collision(sixball.ball[i],sixball.ball[j]);
+                }
+            }
         }
     }
 }
-
 //9つのボールを生成します
 void  createNineBall(void){
     for(int i = 0; i < 9; i++){
         if(i == 0){
             GLfloat cameraPosition[] = {(float)(p_position[0]+rsin), 0.0, (float)(p_position[2]+rcos)};
+            
             //単位ベクトルの取得
             KumaEngine::UnitVector(p_position, cameraPosition, unitVec);
         }
@@ -159,8 +168,8 @@ void  createNineBall(void){
 			hitJudgment(i,j);
         }
         sixball.ball[i].setPosition();
-        sixball.ball[i].Physics();
         sixball.ball[i].Draw();
+        sixball.ball[i].Physics();
         glPopMatrix();
     }
 }

@@ -9,7 +9,6 @@
 class BallObject : public BallAbstract{
 private:
     int m_id = 0;
-
     double m_BoxHeight = 15;
     double m_BoxWidth = 30;
     
@@ -18,6 +17,7 @@ public:
     //方向を含めたpower
     GLfloat vector[3] = { 0.0,0.0,0.0 };
     GLfloat color[4] = {1.0,1.0,1.0,1.0};
+    
     void SetId(int id){
         m_id = id;
     }
@@ -52,15 +52,22 @@ public:
         power = d;
     }
     
+    void getPower(double &p){
+        p = power;
+    }
+    
     //方向を決めて値を入れる
     void setProPower(GLfloat uni[]){
-        printf("power:%f",power);
         vector[0] = (float)(uni[0]*power);
         vector[1] = (float)(uni[1]*power);
         vector[2] = (float)(uni[2]*power);
     }
     
     void Physics(){
+        power = power *0.99f;
+        if(power < 0.1f){
+            power = 0;
+        }
         vector[0] =vector[0]*0.98;
         vector[1] =vector[1]*0.98;
         vector[2] =vector[2]*0.98;
@@ -123,4 +130,5 @@ public:
             setPositionPro(vector[0],vector[1],-vector[2]);
         }
     }
+    
 };

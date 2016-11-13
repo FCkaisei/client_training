@@ -1,7 +1,7 @@
 #include <iostream>
 #include <GLUT/GLUT.h>
 #include "ball.cpp"
-#pragma once
+
 
 //3DObject類の基底クラス。
 //3DObjectを作るときは継承してね
