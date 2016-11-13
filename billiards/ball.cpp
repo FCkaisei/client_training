@@ -4,7 +4,6 @@
 #include <cmath>
 #include <math.h>
 #include "BallAbstract.cpp"
-#include "KumaEngine.cpp"
 
 class BallObject : public BallAbstract{
 private:
