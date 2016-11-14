@@ -22,6 +22,7 @@ double r = 0; /* 回転角 */
 double rcos;
 double rsin;
 double shotPower = 0;
+GLdouble s = 0.5;
 
 void idle(void){
   glutPostRedisplay();
@@ -188,20 +189,7 @@ void  createNineBall(void){
 void display(void){
     //特定の色で指定バッファを削除する
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-    rcos = cos(r)*15;
-    rsin = sin(r)*15;
-    sixball.ball[0].getPosition(p_position);
-    //gameStateを管理する予定
-    gameState();
-    //Lightを生成
-    createLight();
-    //土台生成
-    createTable();
-    //9ボールを生成します(当たり判定もしちゃってるで確認)
-    createNineBall();
-	//実際に描画します
-    glFlush();
+
 }
 
 
@@ -263,13 +251,38 @@ void init(void){
     glLightfv(GL_LIGHT1, GL_SPECULAR, colorObject.white);
 }
 
+/* 100ミリ秒ごとに実行される関数 */
+void timer(int value) {
+    /* 正方形のサイズを増加 */
+    glLoadIdentity();
+    rcos = cos(r)*15;
+    rsin = sin(r)*15;
+    sixball.ball[0].getPosition(p_position);
+    //gameStateを管理する予定
+    gameState();
+    //Lightを生成
+    createLight();
+    //土台生成
+    createTable();
+    //9ボールを生成します(当たり判定もしちゃってるで確認)
+    createNineBall();
+    //実際に描画します
+    glFlush();
+    /* 画面を再描写 */
+    glutPostRedisplay();
+    /* 100ミリ秒後に再実行 */
+    glutTimerFunc(30, timer, 0);
+}
+
 //メインスレッド
 int main(int argc, char *argv[]){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH);
     glutCreateWindow(argv[0]);
   	glutDisplayFunc(display);
-  	glutReshapeFunc(resize);
+    /* 100ミリ秒後に timer() を実行 */
+    glutTimerFunc(30, timer, 0);
+    glutReshapeFunc(resize);
   	glutKeyboardFunc(key);
   	init();
   	glutMainLoop();
