@@ -11,13 +11,17 @@
 #include "NineBall.cpp"
 #include "KumaEngine.cpp"
 #include "GameManager.cpp"
+#include "head/LightObject.h"
 
+LightObject light;
 Table table;
 SixBall sixball;
 ColorObject colorObject;
 PlayerOperationState GameManager::p_OperationState;
 GLfloat p_position[] = { 0.0,0.0,0.0 };
 GLfloat unitVec[] = { 0.0,0.0,0.0 };
+
+
 double r = 0; /* 回転角 */
 double rcos;
 double rsin;
@@ -63,15 +67,6 @@ void gameState(){
     }
 }
 
-//Lightの設定
-void createLight(){
-    /* 光源の位置設定 */
-    GLfloat light0pos[] = { 0.0, 3.0, 5.0, 1.0 };
-    GLfloat light1pos[] = { 5.0, 3.0, 0.0, 1.0 };
-    glLightfv(GL_LIGHT0, GL_POSITION, light0pos);
-    glLightfv(GL_LIGHT1, GL_POSITION, light1pos);
-    
-}
 
 double pow(double p){
     p = p*p;
@@ -261,7 +256,8 @@ void timer(int value) {
     //gameStateを管理する予定
     gameState();
     //Lightを生成
-    createLight();
+    
+    light.createLight();
     //土台生成
     createTable();
     //9ボールを生成します(当たり判定もしちゃってるで確認)

@@ -5,6 +5,8 @@
 #include "objectAbstract.cpp"
 class PocketObject : public ObjectAbs{
 public:
+    //6,4 を定数でヘッダーに定義
+    //固定されているものは定数で宣言
     
     int face[6][4] = {
         { 0, 1, 2, 3 },
@@ -51,6 +53,7 @@ public:
         //GLfloat form[3] = {width,height,depth};
     }
     
+    // BUG*pにポインタを入れてあげよう。。。
     void getPosition(GLfloat *p){
         GLfloat position[] = { positionX, positionY, positionZ };
         GLfloat* p_position;
