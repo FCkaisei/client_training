@@ -12,7 +12,9 @@
 #include "KumaEngine.cpp"
 #include "GameManager.cpp"
 #include "head/LightObject.h"
+#include "head/CameraSetting.h"
 
+CameraSetting cameraObj;
 LightObject light;
 Table table;
 SixBall sixball;
@@ -59,11 +61,11 @@ void gameState(){
     }
     
     if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-        createView();
+        cameraObj.createView(p_position,rsin,rcos);
     }
     else{
         GLfloat cameraPosition[] = {0.0,60.0,0.0};
-        createView(cameraPosition);
+        cameraObj.createView(cameraPosition);
     }
 }
 
