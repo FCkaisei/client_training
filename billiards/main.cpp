@@ -14,8 +14,8 @@
 #include "GameManager.cpp"
 #include "head/LightObject.h"
 #include "head/CameraSetting.h"
+#include "head/Vector.h"
 
-GameValue gamevalue;
 CameraSetting cameraObj;
 LightObject light;
 Table table;
@@ -24,11 +24,6 @@ ColorObject colorObject;
 PlayerOperationState GameManager::p_OperationState;
 GLfloat p_position[] = { 0.0,0.0,0.0 };
 GLfloat unitVec[] = { 0.0,0.0,0.0 };
-
-double rcos;
-double rsin;
-double shotPower = 0;
-GLdouble s = 0.5;
 
 void idle(void){
 
@@ -211,14 +206,13 @@ void key(unsigned char key, int x, int y){
 		case 'q':
 		glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-                
-                r += 0.2f;
+                ballAngle += 0.2f;
             }
 			break;
 		case 'w':
 		glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-                r -= 0.2;
+                ballAngle -= 0.2;
             }
 			break;
 		case 'e':
@@ -252,25 +246,46 @@ void init(void){
 
 /* 100ミリ秒ごとに実行される関数 */
 void timer(int value) {
+    
+    Vector u(1,2);
+    Vector v(4,1);
+    cout<<"u="<<u<<"\n";
+    cout<<"v="<<v<<"\n";
+    
+    cout<<"-v="<<-v<<"\n";
+    cout<<"u+v="<<u+v<<"\n";
+    cout<<"u-v="<<u-v<<"\n";
+    cout<<"u*v="<<u*v<<"\n";
+    
+    u+=Vector(1,1);
+    v-=Vector(1,1);
+    cout<<"u+(1,1)="<<u<<"\n";
+    cout<<"v-(1,1)="<<v<<"\n";
+    
     /* 正方形のサイズを増加 */
     glLoadIdentity();
-    rcos = cos(r)*15;
-    rsin = sin(r)*15;
+    rcos = cos(ballAngle)*15;
+    rsin = sin(ballAngle)*15;
     sixball.ball[0].getPosition(p_position);
+    
     //gameStateを管理する予定
     gameState();
-    //Lightを生成
     
+    //Lightを生成
     light.createLight();
+    
     //土台生成
     createTable();
+    
     //9ボールを生成します(当たり判定もしちゃってるで確認)
     createNineBall();
+    
     //実際に描画します
     glFlush();
-    /* 画面を再描写 */
+    
+    //画面を再描写
     glutPostRedisplay();
-    /* 100ミリ秒後に再実行 */
+    ///30ミリ秒後に再実行
     glutTimerFunc(30, timer, 0);
 }
 
@@ -280,7 +295,7 @@ int main(int argc, char *argv[]){
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH);
     glutCreateWindow(argv[0]);
   	glutDisplayFunc(display);
-    /* 100ミリ秒後に timer() を実行 */
+    //30ミリ秒後に timer() を実行
     glutTimerFunc(30, timer, 0);
     glutReshapeFunc(resize);
   	glutKeyboardFunc(key);

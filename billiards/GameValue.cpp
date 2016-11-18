@@ -1,5 +1,6 @@
 #include "head/GameValue.h"
 
-float r;
-
-
+float ballAngle;
+float rcos;
+float rsin;
+float shotPower;

@@ -4,13 +4,10 @@
 #ifndef __GAMEVALUE_H_INCLUDED__
 #define __GAMEVALUE_H_INCLUDED__
 /*
- Camera
+ Gameで共有して持っておきたい情報をまとめています.
  */
-
-extern float r;
-class GameValue{
-    
-	
-};
-
+extern float ballAngle;
+extern float rcos;
+extern float rsin;
+extern float shotPower;
 #endif
