@@ -6,6 +6,7 @@
 #include <cmath>
 #include <math.h>
 
+#include "head/GameValue.h"
 #include "ColorObject.cpp"
 #include "Table.cpp"
 #include "NineBall.cpp"
@@ -14,6 +15,7 @@
 #include "head/LightObject.h"
 #include "head/CameraSetting.h"
 
+GameValue gamevalue;
 CameraSetting cameraObj;
 LightObject light;
 Table table;
@@ -23,14 +25,13 @@ PlayerOperationState GameManager::p_OperationState;
 GLfloat p_position[] = { 0.0,0.0,0.0 };
 GLfloat unitVec[] = { 0.0,0.0,0.0 };
 
-
-double r = 0; /* 回転角 */
 double rcos;
 double rsin;
 double shotPower = 0;
 GLdouble s = 0.5;
 
 void idle(void){
+
   glutPostRedisplay();
 }
 
@@ -210,7 +211,8 @@ void key(unsigned char key, int x, int y){
 		case 'q':
 		glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-                r += 0.2;
+                
+                r += 0.2f;
             }
 			break;
 		case 'w':
@@ -222,7 +224,7 @@ void key(unsigned char key, int x, int y){
 		case 'e':
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                 GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
-                shotPower = 1.2f;
+                shotPower= 1.2f;
                 sixball.ball[0].setPower(shotPower);
                 sixball.ball[0].setVectorPower(unitVec);
             }
