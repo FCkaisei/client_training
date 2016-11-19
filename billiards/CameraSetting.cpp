@@ -1,6 +1,8 @@
 #include <iostream>
 #include <GLUT/GLUT.h>
 #include "head/CameraSetting.h"
+
+
 /*
  Camera
  */
@@ -13,9 +15,12 @@ void CameraSetting::createView(GLfloat gl[]){
     
 };
 //p_positionとrsinが必要
-void CameraSetting::createView(GLfloat p_position[], float rsin, float rcos){
+void CameraSetting::createView(Vector position){
+    float x = position.x;
+    float z = position.z;
     gluLookAt(
-              (float)p_position[0]+rsin, 3.0, (float)p_position[2]+rcos,
-              (float)p_position[0], 0.0, (float)p_position[2],
-              0.0, 1.0, 0.0);
+              x+rsin, 3.0, z+rcos,
+              x, 0.0, z,
+              0.0, 1.0, 0.0
+              );
 }

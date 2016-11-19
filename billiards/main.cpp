@@ -30,22 +30,6 @@ void idle(void){
   glutPostRedisplay();
 }
 
-//カメラの設定を行っています(玉が止まっているとき)
-void createView(){
-    gluLookAt(
-              (float)p_position[0]+rsin, 3.0, (float)p_position[2]+rcos,
-              (float)p_position[0], 0.0, (float)p_position[2],
-              0.0, 1.0, 0.0);
-}
-
-//カメラの設定(弾が動いているとき)
-void createView(GLfloat gl[]){
-    gluLookAt(gl[0],gl[1],gl[2],
-              15.0, 1.0, 7.5,
-              0.0,3.0,0.0
-    );
-}
-
 //ゲームのステートを変更します。
 void gameState(){
     //全ての弾が止まったらカメラモードを変更
@@ -57,7 +41,7 @@ void gameState(){
     }
     
     if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-        cameraObj.createView(p_position,rsin,rcos);
+        cameraObj.createView(*sixball.ball[0].position);
     }
     else{
         GLfloat cameraPosition[] = {0.0,60.0,0.0};
@@ -116,13 +100,17 @@ void hitJudgment(int i, int j){
         double power2;
         sixball.ball[i].getPower(power);
         sixball.ball[j].getPower(power2);
-        GLfloat p_position2[] = { 0.0,0.0,0.0 };
         GLfloat p_form2[] = { 0.0,0.0,0.0 };
-        sixball.ball[j].getPosition(p_position2);
         sixball.ball[j].getForm(p_form2);
+        float x = sixball.ball[i].position->x;
+        float y = sixball.ball[i].position->y;
+        float z = sixball.ball[i].position->z;
+        float x2 = sixball.ball[j].position->x;
+        float y2 = sixball.ball[j].position->y;
+        float z2 = sixball.ball[j].position->z;
         
         //衝突判定
-        if(pow(sixball.ball[i].positionX - p_position2[0]) + pow(sixball.ball[i].positionY - p_position2[1]) + pow(sixball.ball[i].positionZ - p_position2[2]) <= pow(sixball.ball[i].width + p_form2[0])){
+        if(pow(x - x2) + pow(y - y2) + pow(z - z2) <= pow(sixball.ball[i].width + sixball.ball[j].width)){
             
             //powerが強い側に従って玉移動
             if(power > power2){
@@ -159,7 +147,6 @@ void  createNineBall(void){
         }
         
         glPushMatrix();
-        
         //色決め
         glMaterialfv(GL_FRONT, GL_DIFFUSE, sixball.ball[i].color);
         
@@ -247,26 +234,10 @@ void init(void){
 /* 100ミリ秒ごとに実行される関数 */
 void timer(int value) {
     
-    Vector u(1,2);
-    Vector v(4,1);
-    cout<<"u="<<u<<"\n";
-    cout<<"v="<<v<<"\n";
-    
-    cout<<"-v="<<-v<<"\n";
-    cout<<"u+v="<<u+v<<"\n";
-    cout<<"u-v="<<u-v<<"\n";
-    cout<<"u*v="<<u*v<<"\n";
-    
-    u+=Vector(1,1);
-    v-=Vector(1,1);
-    cout<<"u+(1,1)="<<u<<"\n";
-    cout<<"v-(1,1)="<<v<<"\n";
-    
     /* 正方形のサイズを増加 */
     glLoadIdentity();
     rcos = cos(ballAngle)*15;
     rsin = sin(ballAngle)*15;
-    sixball.ball[0].getPosition(p_position);
     
     //gameStateを管理する予定
     gameState();
