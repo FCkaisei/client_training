@@ -4,8 +4,10 @@
 #include <cmath>
 #include <math.h>
 #include "BallAbstract.cpp"
+#include "head/Vector.h"
 
 class BallObject : public BallAbstract{
+    
 private:
     int m_id = 0;
     double m_BoxHeight = 15;
@@ -15,14 +17,19 @@ public:
     double power = 0;
     GLfloat vector[3] = { 0.0,0.0,0.0 };
     GLfloat color[4] = {1.0,1.0,1.0,1.0};
-    
+    bool is_Existence = true;
     //玉の番号を付与
     void setId(int id){
         m_id = id;
     }
     
+    int getId(){
+        return m_id;
+    }
+    
     //色を付与
     void setColor(float R,float G,float B,float A){
+        
         color[0] = R;
         color[1] = G;
         color[2] = B;
@@ -60,9 +67,9 @@ public:
     }
     
     void setPosition(){
-        positionX = positionX+vector[0];
-        positionY = positionY+vector[1];
-        positionZ = positionZ+vector[2];
+        position->x = position->x + vector[0];
+        position->y = position->y + vector[1];
+        position->z = position->z + vector[2];
     }
     
     void setPositionPro(float x, float y, float z){
@@ -81,40 +88,53 @@ public:
     
     void setPosition(float x, float y, float z){
 
-        positionX = x+vector[0];
-        positionY = y+vector[1];
-        positionZ = z+vector[2];
+        position->x = x;
+        position->y = y;
+        position->z = z;
     }
     
     
     //壁に当たったとき反転
     void collisionDetectionBox(){
-        GLfloat p_position2[] = { 0.0,0.0,0.0 };
+        
+        //getPositionを消す
         GLfloat p_form2[] = { 0.0,0.0,0.0 };
         
-        getPosition(p_position2);
         getForm(p_form2);
         
         //left
-        if(p_position2[0] < 0.0 && p_position2[2] < m_BoxHeight){
-            setPosition(0.1, p_position2[1], p_position2[2]);
+        if(position->x < 0.0 && position->z < m_BoxHeight){
+            setPosition(0.1, position->y, position->z);
             setPositionPro(-vector[0], vector[1], vector[2]);
         }
         //down
-        if(p_position2[0] < m_BoxWidth && p_position2[2]<0.0){
-            setPosition(p_position2[0], p_position2[1], 0.1);
+        if(position->x < m_BoxWidth && position->z<0.0){
+            setPosition(position->x, position->y, 0.1);
             setPositionPro(vector[0], vector[1], -vector[2]);
         }
         //right
-        if(p_position2[0] > m_BoxWidth && p_position2[2] < m_BoxHeight){
-            setPosition(29.9, p_position2[1], p_position2[2]);
+        if(position->x > m_BoxWidth && position->z < m_BoxHeight){
+            setPosition(29.9, position->y, position->z);
             setPositionPro(-vector[0], vector[1], vector[2]);
         }
         //up
-        if(p_position2[0] < m_BoxWidth && p_position2[2]>m_BoxHeight){
-            setPosition(p_position2[0], p_position2[1], 14.9);
+        if(position->x < m_BoxWidth && position->z > m_BoxHeight){
+            setPosition(position->x, position->y, 14.9);
             setPositionPro(vector[0], vector[1], -vector[2]);
         }
     }
+    
+    //穴に当たったときの挙動
+    void collisionPockets(){
+        //左上Pocket
+        if(position->x > 0.0 && position->x <3 && position->z < m_BoxHeight){
+            is_Existence = false;
+        }
+    }
+    
+    
+    
+    
+
     
 };

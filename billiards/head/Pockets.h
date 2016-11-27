@@ -1,13 +1,9 @@
 #include <iostream>
 #include <GLUT/GLUT.h>
-#ifndef __VECTOR_H_INCLUDED__
-#define __VECTOR_H_INCLUDED__
+#ifndef __POCKETS_H_INCLUDED__
+#define __POCKETS_H_INCLUDED__
 
-/*
- *Vectorクラス
- *参考URL:http://d.hatena.ne.jp/white_wheels/20100304/p2
- */
-class Vector{
+class Pockets{
 public:
     Vector();
     Vector(float _x,float _y,float _z);

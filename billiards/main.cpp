@@ -9,55 +9,43 @@
 #include "head/GameValue.h"
 #include "ColorObject.cpp"
 #include "Table.cpp"
-#include "NineBall.cpp"
+#include "head/Nineball.h"
 #include "KumaEngine.cpp"
 #include "GameManager.cpp"
 #include "head/LightObject.h"
 #include "head/CameraSetting.h"
 #include "head/Vector.h"
 
+NineBall nineball;
 CameraSetting cameraObj;
 LightObject light;
 Table table;
-SixBall sixball;
+
 ColorObject colorObject;
 PlayerOperationState GameManager::p_OperationState;
 GLfloat p_position[] = { 0.0,0.0,0.0 };
 GLfloat unitVec[] = { 0.0,0.0,0.0 };
-
+bool moveBall = false;
+int firstCollision = 0;
 void idle(void){
-
   glutPostRedisplay();
-}
-
-//カメラの設定を行っています(玉が止まっているとき)
-void createView(){
-    gluLookAt(
-              (float)p_position[0]+rsin, 3.0, (float)p_position[2]+rcos,
-              (float)p_position[0], 0.0, (float)p_position[2],
-              0.0, 1.0, 0.0);
-}
-
-//カメラの設定(弾が動いているとき)
-void createView(GLfloat gl[]){
-    gluLookAt(gl[0],gl[1],gl[2],
-              15.0, 1.0, 7.5,
-              0.0,3.0,0.0
-    );
 }
 
 //ゲームのステートを変更します。
 void gameState(){
     //全ての弾が止まったらカメラモードを変更
     GLfloat ballVec[] = {0.0,0.0,0.0};
-    sixball.ball[0].getVec(ballVec);
+    nineball.ball[0].getVec(ballVec);
     
+    //球が動いてるとき
     if((ballVec[0] < 0.001 && ballVec[0] > -0.001) || (ballVec[2] < 0.001 && ballVec[2] > -0.001)){
+        moveBall = false;
         GameManager::setPlayerOperationState(PlayerOperationState::WAIT);
     }
     
+    //球が止まってるとき
     if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-        cameraObj.createView(p_position,rsin,rcos);
+        cameraObj.createView(*nineball.ball[0].position);
     }
     else{
         GLfloat cameraPosition[] = {0.0,60.0,0.0};
@@ -84,13 +72,13 @@ void createTable(){
         glPopMatrix();
     }
     
-	//ポケットを作る。（未完)
-//    for(int i = 0; i < 6; i++){
-//        glPushMatrix();
-//        glMaterialfv(GL_FRONT, GL_DIFFUSE, table.hall[i].color);
-//        table.hall[i].Draw();
-//        glPopMatrix();
-//    }
+	//	ポケットを作る。（未完)
+    for(int i = 0; i < 6; i++){
+        glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, table.hall[i].color);
+        table.hall[i].Draw();
+        glPopMatrix();
+    }
 }
 
 
@@ -111,39 +99,56 @@ void collision(BallObject &ballObj,BallObject &ballObj2){
 
 //衝突判定
 void hitJudgment(int i, int j){
-    if(i != j){
-        double power;
-        double power2;
-        sixball.ball[i].getPower(power);
-        sixball.ball[j].getPower(power2);
-        GLfloat p_position2[] = { 0.0,0.0,0.0 };
-        GLfloat p_form2[] = { 0.0,0.0,0.0 };
-        sixball.ball[j].getPosition(p_position2);
-        sixball.ball[j].getForm(p_form2);
+    
+    if(i == j){
+        return;
+    }
+    double power;
+    double power2;
+    nineball.ball[i].getPower(power);
+    nineball.ball[j].getPower(power2);
+    GLfloat p_form2[] = { 0.0,0.0,0.0 };
+    nineball.ball[j].getForm(p_form2);
+    float x = nineball.ball[i].position->x;
+    float y = nineball.ball[i].position->y;
+    float z = nineball.ball[i].position->z;
+    float x2 = nineball.ball[j].position->x;
+    float y2 = nineball.ball[j].position->y;
+    float z2 = nineball.ball[j].position->z;
+    
+    //衝突判定
+    if(pow(x - x2) + pow(y - y2) + pow(z - z2) <= pow(nineball.ball[i].width + nineball.ball[j].width)){
         
-        //衝突判定
-        if(pow(sixball.ball[i].positionX - p_position2[0]) + pow(sixball.ball[i].positionY - p_position2[1]) + pow(sixball.ball[i].positionZ - p_position2[2]) <= pow(sixball.ball[i].width + p_form2[0])){
+        if(moveBall && nineball.ball[i].getId() == 0){
             
-            //powerが強い側に従って玉移動
-            if(power > power2){
-        		if(power > 0){
-               	 	collision(sixball.ball[i],sixball.ball[j]);
-                    printf("%s","Win");
-            	}
-        	}
-        	else if(power < power2){
-        		if(power2 > 0){
-                    printf("%s","Lose");
-            		collision(sixball.ball[j],sixball.ball[i]);
-            	}
-        	}
-            else if (power == power2){
-				if(power > 0){
-                    printf("%s","Draw");
-                    collision(sixball.ball[i],sixball.ball[j]);
-                }
+            moveBall =false;
+            if(firstCollision != nineball.ball[j].getId()){
+                printf("ミス\n");
+            }
+            else{
+                
+                printf("GOOD%i",nineball.ball[i].getId());
+                
+                printf("GOOD%i",firstCollision);
+                printf("SUCCESS\n");
             }
         }
+            //powerが強い側に従って玉移動
+            if(power > power2){
+                if(power > 0){
+                    collision(nineball.ball[i],nineball.ball[j]);
+                }
+            }
+            else if(power < power2){
+                if(power2 > 0){
+                    collision(nineball.ball[j],nineball.ball[i]);
+                }
+            }
+            else if (power == power2){
+                if(power > 0){
+                    collision(nineball.ball[i],nineball.ball[j]);
+                }
+            }
     }
 }
 
@@ -151,29 +156,42 @@ void hitJudgment(int i, int j){
 //9つのボールを生成します
 void  createNineBall(void){
     for(int i = 0; i < 9; i++){
+        //自玉の時は別途処理を追加
         if(i == 0){
+            for(int j = 9; j>0; j--){
+                
+                //はじめに当たることが許されている玉
+                if(nineball.ball[j].is_Existence){
+                    firstCollision = nineball.ball[j].getId();
+                }
+            }
+            
             GLfloat cameraPosition[] = {(float)(p_position[0]+rsin), 0.0, (float)(p_position[2]+rcos)};
             
             //単位ベクトルの取得
             KumaEngine::UnitVector(p_position, cameraPosition, unitVec);
         }
         
-        glPushMatrix();
+        if(nineball.ball[i].is_Existence){
         
-        //色決め
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, sixball.ball[i].color);
+        	glPushMatrix();
+        	//色決め
+        	glMaterialfv(GL_FRONT, GL_DIFFUSE, nineball.ball[i].color);
         
-        //壁当たり判定チェック
-        sixball.ball[i].collisionDetectionBox();
+        	//壁当たり判定チェック
+        	nineball.ball[i].collisionDetectionBox();
         
-        //弾の数だけ弾同士の当たり判定チェック
-        for(int j = i; j < 9; j++){
-			hitJudgment(i,j);
+        	//弾の数だけ弾同士の当たり判定チェック
+        	for(int j = i; j < 9; j++){
+                if(nineball.ball[j].is_Existence){
+					hitJudgment(i,j);
+                }
+        	}
+        	nineball.ball[i].setPosition();
+        	nineball.ball[i].Draw();
+        	nineball.ball[i].Physics();
+        	glPopMatrix();
         }
-        sixball.ball[i].setPosition();
-        sixball.ball[i].Draw();
-        sixball.ball[i].Physics();
-        glPopMatrix();
     }
 }
 
@@ -219,21 +237,28 @@ void key(unsigned char key, int x, int y){
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                 GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
                 shotPower= 1.2f;
-                sixball.ball[0].setPower(shotPower);
-                sixball.ball[0].setVectorPower(unitVec);
+                nineball.ball[0].setPower(shotPower);
+                nineball.ball[0].setVectorPower(unitVec);
+                moveBall = true;
+                firstCollision = 0;
             }
             break;
 
+        case 'f':
+            nineball.ball[1].is_Existence = false;
+
+            
+            break;
+            
   		default:
     		break;
 		}
 }
 
-
 //初期化
 void init(void){
-    sixball.ball[0].setForm(0.5f,16.0f,16.0f);
-    sixball.ball[0].setPosition(7.5,0.0,7.5);
+    nineball.ball[0].setForm(0.5f,16.0f,16.0f);
+    nineball.ball[0].setPosition(7.5,0.0,7.5);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_FRONT);
@@ -247,26 +272,10 @@ void init(void){
 /* 100ミリ秒ごとに実行される関数 */
 void timer(int value) {
     
-    Vector u(1,2);
-    Vector v(4,1);
-    cout<<"u="<<u<<"\n";
-    cout<<"v="<<v<<"\n";
-    
-    cout<<"-v="<<-v<<"\n";
-    cout<<"u+v="<<u+v<<"\n";
-    cout<<"u-v="<<u-v<<"\n";
-    cout<<"u*v="<<u*v<<"\n";
-    
-    u+=Vector(1,1);
-    v-=Vector(1,1);
-    cout<<"u+(1,1)="<<u<<"\n";
-    cout<<"v-(1,1)="<<v<<"\n";
-    
     /* 正方形のサイズを増加 */
     glLoadIdentity();
     rcos = cos(ballAngle)*15;
     rsin = sin(ballAngle)*15;
-    sixball.ball[0].getPosition(p_position);
     
     //gameStateを管理する予定
     gameState();

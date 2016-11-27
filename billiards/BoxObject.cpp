@@ -9,6 +9,7 @@
 class BoxObject : public ObjectAbs{
 public:
     
+    //面
 	int face[6][4] = {
 		{ 0, 1, 2, 3 },
 		{ 1, 5, 6, 2 },

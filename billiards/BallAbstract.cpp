@@ -1,13 +1,17 @@
 #include <iostream>
 #include <GLUT/GLUT.h>
 #include "objectAbstract.cpp"
+#include "head/Vector.h"
 #pragma once
 
 class BallAbstract: public ObjectAbs{
     
     
 public:
-    
+    Vector *position;
+    float width = 0;
+    float height = 0;
+    float depth = 0;
     
     virtual void setPower(double d) = 0;
     
@@ -26,24 +30,12 @@ public:
         *p = height;
     }
     
-    void getPosition(GLfloat *p){
-        
-        *p = positionX;
-        ++p;
-        *p = positionY;
-        ++p;
-        *p = positionZ;
-    }
-    
     void Draw(void){
-        glTranslatef(positionX,positionY,positionZ);
+        glTranslatef(position->x,position->y,position->z);
         glutSolidSphere(width,depth,height);
     }
     
-    float positionX = 0;
-    float positionY = 0;
-    float positionZ = 0;
-    float width = 0;
-    float height = 0;
-    float depth = 0;
+    BallAbstract(){
+         position = new Vector();
+    }
 };
