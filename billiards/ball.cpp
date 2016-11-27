@@ -7,6 +7,7 @@
 #include "head/Vector.h"
 
 class BallObject : public BallAbstract{
+    
 private:
     int m_id = 0;
     double m_BoxHeight = 15;
@@ -16,14 +17,19 @@ public:
     double power = 0;
     GLfloat vector[3] = { 0.0,0.0,0.0 };
     GLfloat color[4] = {1.0,1.0,1.0,1.0};
-    
+    bool is_Existence = true;
     //玉の番号を付与
     void setId(int id){
         m_id = id;
     }
     
+    int getId(){
+        return m_id;
+    }
+    
     //色を付与
     void setColor(float R,float G,float B,float A){
+        
         color[0] = R;
         color[1] = G;
         color[2] = B;
@@ -61,9 +67,9 @@ public:
     }
     
     void setPosition(){
-        position->x = position->x+vector[0];
-        position->y = position->y+vector[1];
-        position->z = position->z+vector[2];
+        position->x = position->x + vector[0];
+        position->y = position->y + vector[1];
+        position->z = position->z + vector[2];
     }
     
     void setPositionPro(float x, float y, float z){
@@ -96,8 +102,6 @@ public:
         
         getForm(p_form2);
         
-        
-        
         //left
         if(position->x < 0.0 && position->z < m_BoxHeight){
             setPosition(0.1, position->y, position->z);
@@ -119,5 +123,18 @@ public:
             setPositionPro(vector[0], vector[1], -vector[2]);
         }
     }
+    
+    //穴に当たったときの挙動
+    void collisionPockets(){
+        //左上Pocket
+        if(position->x > 0.0 && position->x <3 && position->z < m_BoxHeight){
+            is_Existence = false;
+        }
+    }
+    
+    
+    
+    
+
     
 };

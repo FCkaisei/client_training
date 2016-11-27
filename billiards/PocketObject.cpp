@@ -3,11 +3,13 @@
 #include <vector>
 #include <cmath>
 #include "objectAbstract.cpp"
+
 class PocketObject : public ObjectAbs{
 public:
     //6,4 を定数でヘッダーに定義
     //固定されているものは定数で宣言
     
+    //面を表現
     int face[6][4] = {
         { 0, 1, 2, 3 },
         { 1, 5, 6, 2 },
