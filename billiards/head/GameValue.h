@@ -10,4 +10,11 @@ extern float ballAngle;
 extern float rcos;
 extern float rsin;
 extern float shotPower;
+
+//score
+extern int score;
+
+//弾を連続で落としたときのコンボ
+extern int combo;
+
 #endif

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <string>
 #include <GLUT/GLUT.h>
@@ -6,7 +7,6 @@
 #include <cmath>
 #include <math.h>
 
-#include "head/GameValue.h"
 #include "ColorObject.cpp"
 #include "Table.cpp"
 #include "head/Nineball.h"
@@ -15,18 +15,26 @@
 #include "head/LightObject.h"
 #include "head/CameraSetting.h"
 #include "head/Vector.h"
+#include "head/GameValue.h"
 
 NineBall nineball;
 CameraSetting cameraObj;
 LightObject light;
 Table table;
-
 ColorObject colorObject;
 PlayerOperationState GameManager::p_OperationState;
+PlayerOperationState_Miss GameManager::p_OperationStateMiss;
+
+
 GLfloat p_position[] = { 0.0,0.0,0.0 };
 GLfloat unitVec[] = { 0.0,0.0,0.0 };
 bool moveBall = false;
 int firstCollision = 0;
+string gameStateLabel = "now loading...";
+string gameStateLabelMiss = "--";
+char nextQ = '0';
+
+
 void idle(void){
   glutPostRedisplay();
 }
@@ -37,22 +45,44 @@ void gameState(){
     GLfloat ballVec[] = {0.0,0.0,0.0};
     nineball.ball[0].getVec(ballVec);
     
-    //球が動いてるとき
-    if((ballVec[0] < 0.001 && ballVec[0] > -0.001) || (ballVec[2] < 0.001 && ballVec[2] > -0.001)){
+    if(nineball.ball[0].is_Existence == false){
+        
+        nineball.ball[0].setPositionPro(0.0f,0.0f,0.0f);
+        nineball.ball[0].setPosition(4.0f,0.0f,4.0f);
+        
+        nineball.ball[0].is_Existence = true;
+    }
+    
+    //球が止まっているとき
+    if((ballVec[0] < 0.001 && ballVec[0] > -0.001)){
         moveBall = false;
         GameManager::setPlayerOperationState(PlayerOperationState::WAIT);
     }
     
     //球が止まってるとき
     if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
+        
+        gameStateLabel = "STOP";
         cameraObj.createView(*nineball.ball[0].position);
-    }
-    else{
-        GLfloat cameraPosition[] = {0.0,60.0,0.0};
+        GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::NONE);
+    }else{
+        
+        gameStateLabel = "MOVE";
+        GLfloat cameraPosition[] = {0.0,80.0,0.0};
         cameraObj.createView(cameraPosition);
     }
+    
+    
+    if(GameManager::getPlayerOperationState_Miss() == PlayerOperationState_Miss::FAL){
+    	gameStateLabelMiss = "FALL";
+    }
+    else if(GameManager::getPlayerOperationState_Miss() == PlayerOperationState_Miss::NONE){
+        gameStateLabelMiss = "";
+    }
+    else if(GameManager::getPlayerOperationState_Miss() == PlayerOperationState_Miss::GOOD){
+        gameStateLabelMiss = "GOOD";
+    }
 }
-
 
 double pow(double p){
     p = p*p;
@@ -72,6 +102,7 @@ void createTable(){
         glPopMatrix();
     }
     
+    
 	//	ポケットを作る。（未完)
     for(int i = 0; i < 6; i++){
         glPushMatrix();
@@ -86,6 +117,8 @@ void createTable(){
 void collision(BallObject &ballObj,BallObject &ballObj2){
     
     GLfloat formerBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
+    
+    
     ballObj.setVectorPower(formerBallVector);
     GLfloat supplierBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
     
@@ -112,43 +145,66 @@ void hitJudgment(int i, int j){
     float x = nineball.ball[i].position->x;
     float y = nineball.ball[i].position->y;
     float z = nineball.ball[i].position->z;
+    //(x,z)
+    //(x2,z2)
+    
     float x2 = nineball.ball[j].position->x;
     float y2 = nineball.ball[j].position->y;
     float z2 = nineball.ball[j].position->z;
+
+    
+    //接点を0,0とする。
+    
+    
+    //y=4x+4に垂直な直線はy=-1/4×x+bになります。
+    
+    //玉同士の直線の垂線
+    
+    
+    //玉同士の接線
+    
+    
     
     //衝突判定
     if(pow(x - x2) + pow(y - y2) + pow(z - z2) <= pow(nineball.ball[i].width + nineball.ball[j].width)){
-        
         if(moveBall && nineball.ball[i].getId() == 0){
             
             moveBall =false;
             if(firstCollision != nineball.ball[j].getId()){
-                printf("ミス\n");
+                //フォルスだったとき！！
+                GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::FAL);
+                
+                combo = 0;
+                
             }
             else{
-                
+                combo += 2;
                 printf("GOOD%i",nineball.ball[i].getId());
                 
                 printf("GOOD%i",firstCollision);
                 printf("SUCCESS\n");
+                GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::GOOD);
             }
         }
-            //powerが強い側に従って玉移動
-            if(power > power2){
-                if(power > 0){
-                    collision(nineball.ball[i],nineball.ball[j]);
-                }
+        
+        
+        
+        //powerが強い側に従って玉移動
+        if(power > power2){
+            if(power > 0){
+                collision(nineball.ball[i],nineball.ball[j]);
             }
-            else if(power < power2){
-                if(power2 > 0){
-                    collision(nineball.ball[j],nineball.ball[i]);
-                }
+        }
+        else if(power < power2){
+            if(power2 > 0){
+                collision(nineball.ball[j],nineball.ball[i]);
             }
-            else if (power == power2){
-                if(power > 0){
-                    collision(nineball.ball[i],nineball.ball[j]);
-                }
+        }
+        else if (power == power2){
+            if(power > 0){
+                collision(nineball.ball[i],nineball.ball[j]);
             }
+        }
     }
 }
 
@@ -178,6 +234,7 @@ void  createNineBall(void){
         	//色決め
         	glMaterialfv(GL_FRONT, GL_DIFFUSE, nineball.ball[i].color);
         
+            nineball.ball[i].collisionPockets();
         	//壁当たり判定チェック
         	nineball.ball[i].collisionDetectionBox();
         
@@ -195,18 +252,67 @@ void  createNineBall(void){
     }
 }
 
+void display2D(string str, double x, double y){
+    // WAIT
+    glRasterPos2f(x, y);
+    int size = (int)str.size();
+    for(int i = 0; i < size; ++i){
+        char ic = str[i];
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ic);
+    }
+}
+
+
+void create2DLabel(){
+    // 平行投影にする
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(1, 1, 1, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    
+    display2D(gameStateLabel, -0.9,0.9);
+    
+    std::string str = std::to_string(firstCollision);
+    str = "NEXT:"+str;
+    
+    display2D(str,0.5, 0.8);
+    
+    // ゲームの結果
+    display2D(gameStateLabelMiss,0.0,0.0);
+    
+    // スコアを表示
+    str = std::to_string(score);
+    str = "score:"+str;
+    display2D(str,0.5f, -0.8f);
+    
+    // コンボ数
+    str = std::to_string(combo);
+    str = "magnification::"+str;
+    display2D(str,-0.9,-0.8);
+    
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+    
+}
+
 
 //再描写時に実行される関数
 void display(void){
     //特定の色で指定バッファを削除する
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 }
 
 
 //ウィンドウの比率の固定などに利用
 void resize(int w, int h){
-	glViewport(0,0,w,h);
+
+    glViewport(0,0,w,h);
 	//透視変換行列の設定
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -215,6 +321,7 @@ void resize(int w, int h){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(3.0f, 4.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
 }
 
 
@@ -224,13 +331,13 @@ void key(unsigned char key, int x, int y){
 		case 'q':
 		glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-                ballAngle += 0.2f;
+                ballAngle += 0.05f;
             }
 			break;
 		case 'w':
 		glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-                ballAngle -= 0.2;
+                ballAngle -= 0.05;
             }
 			break;
 		case 'e':
@@ -246,8 +353,6 @@ void key(unsigned char key, int x, int y){
 
         case 'f':
             nineball.ball[1].is_Existence = false;
-
-            
             break;
             
   		default:
@@ -282,6 +387,8 @@ void timer(int value) {
     
     //Lightを生成
     light.createLight();
+    
+    create2DLabel();
     
     //土台生成
     createTable();

@@ -4,3 +4,5 @@ float ballAngle;
 float rcos;
 float rsin;
 float shotPower;
+int score;
+int combo;
