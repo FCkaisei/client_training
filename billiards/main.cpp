@@ -10,7 +10,7 @@
 #include "ColorObject.cpp"
 #include "Table.cpp"
 #include "head/Nineball.h"
-#include "KumaEngine.cpp"
+#include "Engine.cpp"
 #include "GameManager.cpp"
 #include "head/LightObject.h"
 #include "head/CameraSetting.h"
@@ -113,21 +113,56 @@ void createTable(){
 }
 
 
-//衝突時の値変動
-void collision(BallObject &ballObj,BallObject &ballObj2){
+
+// ベクトル分解
+// ballVectorと２つのballのAngle
+void Disassembly(float ball_vec_X,float ball_vec_Y,float opponet_your_Angle, GLfloat a[]){
     
-    GLfloat formerBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
+    
+    //２つの速度の合成:OK
+    double speedV_mix = sqrt((ball_vec_X * ball_vec_X) + (ball_vec_Y * ball_vec_Y));
     
     
-    ballObj.setVectorPower(formerBallVector);
-    GLfloat supplierBallVector[3] = {-ballObj.vector[0], ballObj.vector[1], -ballObj.vector[2]};
+    //球の進行方向:OK
+    double myBallDirection = atan2(ball_vec_Y, ball_vec_X);
     
-    //衝突先のたまにベクトルを渡す
-    double power;
-    ballObj.getPower(power);
-    ballObj2.setPower(power);
-    ballObj2.setVectorPower(supplierBallVector);
+    
+    //衝突後相手球の進行方向」に対する「自球衝突前進行方向」の角度の差:OK
+    double Angle_differens = myBallDirection - opponet_your_Angle;
+    
+    
+    //衝突後の相手の弾の速度:OK
+    float speedV1 = abs(speedV_mix * cos(Angle_differens));
+    
+    //衝突後の自分の弾の速度:OK
+    float speedV2 = abs(speedV_mix * sin(Angle_differens));
+    
+    
+    //衝突後の相手の球のX速度:OK
+    float opponentSpeedVx = -speedV1*cos(opponet_your_Angle);
+    //Y速度:OK
+    float opponentSpeedVy = -speedV1*sin(opponet_your_Angle);
+    
+    float Uxs;
+    float Uys;
+    if(sin(Angle_differens)<0){
+        Uxs=speedV2 * cos(opponet_your_Angle - M_PI/2);//衝突後の自球のx速度
+        
+        Uys=speedV2*sin(opponet_your_Angle - M_PI/2);//衝突後の自球のy速度
+    } else{
+        Uxs=speedV2*cos(opponet_your_Angle + M_PI/2);//衝突後の自球のx速度
+        
+        Uys=speedV2*sin(opponet_your_Angle + M_PI/2);//衝突後の自球のy速度
+
+    }
+    a[0] = Uxs;
+    a[1] = Uys;
+    a[2] = opponentSpeedVx;
+    a[3] = opponentSpeedVy;
 }
+
+
+
 
 
 //衝突判定
@@ -136,39 +171,18 @@ void hitJudgment(int i, int j){
     if(i == j){
         return;
     }
-    double power;
-    double power2;
-    nineball.ball[i].getPower(power);
-    nineball.ball[j].getPower(power2);
     GLfloat p_form2[] = { 0.0,0.0,0.0 };
     nineball.ball[j].getForm(p_form2);
-    float x = nineball.ball[i].position->x;
-    float y = nineball.ball[i].position->y;
-    float z = nineball.ball[i].position->z;
-    //(x,z)
-    //(x2,z2)
+    float x1 = nineball.ball[i].position->x;
+    float y1 = nineball.ball[i].position->y;
+    float z1 = nineball.ball[i].position->z;
     
     float x2 = nineball.ball[j].position->x;
     float y2 = nineball.ball[j].position->y;
     float z2 = nineball.ball[j].position->z;
-
     
-    //接点を0,0とする。
-    
-    
-    //y=4x+4に垂直な直線はy=-1/4×x+bになります。
-    
-    //玉同士の直線の垂線
-    
-    
-    //玉同士の接線
-    
-    
-    
-    //衝突判定
-    if(pow(x - x2) + pow(y - y2) + pow(z - z2) <= pow(nineball.ball[i].width + nineball.ball[j].width)){
+    if(pow(x1 - x2) + pow(y1 - y2) + pow(z1 - z2) <= pow(nineball.ball[i].width + nineball.ball[j].width)){
         if(moveBall && nineball.ball[i].getId() == 0){
-            
             moveBall =false;
             if(firstCollision != nineball.ball[j].getId()){
                 //フォルスだったとき！！
@@ -187,24 +201,32 @@ void hitJudgment(int i, int j){
             }
         }
         
+        //接触ファンクション
+        //衝突後の速度を出す
         
+        GLfloat tmpHoge[] ={0.0f,0.0f,0.0f,0.0f};
+        GLfloat tmpHoge2[] ={0.0f,0.0f,0.0f,0.0f};
+        //分解中身
+        double kaku0 = atan2((z1 - z2),(x1 - x2));
+        double kaku00 = atan2((z2 - z1),(x2 - x1));
         
-        //powerが強い側に従って玉移動
-        if(power > power2){
-            if(power > 0){
-                collision(nineball.ball[i],nineball.ball[j]);
-            }
-        }
-        else if(power < power2){
-            if(power2 > 0){
-                collision(nineball.ball[j],nineball.ball[i]);
-            }
-        }
-        else if (power == power2){
-            if(power > 0){
-                collision(nineball.ball[i],nineball.ball[j]);
-            }
-        }
+        printf("AT:%f\n",kaku0);
+        Disassembly(nineball.ball[i].getVector_x(), nineball.ball[i].getVector_z() , kaku0, tmpHoge);
+        Disassembly(nineball.ball[j].getVector_x(), nineball.ball[j].getVector_z() , kaku00, tmpHoge2);
+        
+        //結果の合成
+        GLfloat tmpHoge3[] ={
+            tmpHoge[0]+tmpHoge2[2],
+            tmpHoge[1]+tmpHoge2[3],
+            tmpHoge[2]+tmpHoge2[0],
+            tmpHoge[3]+tmpHoge2[1]
+        };
+        
+        //ベクトルのセットって言うか更新
+        nineball.ball[i].setPositionPro(tmpHoge3[0],0.0f,tmpHoge3[1]);
+        nineball.ball[i].setPosition();
+        nineball.ball[j].setPositionPro(tmpHoge3[2],0.0f,tmpHoge3[3]);
+        nineball.ball[j].setPosition();
     }
 }
 
@@ -225,11 +247,11 @@ void  createNineBall(void){
             GLfloat cameraPosition[] = {(float)(p_position[0]+rsin), 0.0, (float)(p_position[2]+rcos)};
             
             //単位ベクトルの取得
-            KumaEngine::UnitVector(p_position, cameraPosition, unitVec);
+            Engine::UnitVector(p_position, cameraPosition, unitVec);
         }
-        
+    
+    
         if(nineball.ball[i].is_Existence){
-        
         	glPushMatrix();
         	//色決め
         	glMaterialfv(GL_FRONT, GL_DIFFUSE, nineball.ball[i].color);
@@ -241,10 +263,10 @@ void  createNineBall(void){
         	//弾の数だけ弾同士の当たり判定チェック
         	for(int j = i; j < 9; j++){
                 if(nineball.ball[j].is_Existence){
-					hitJudgment(i,j);
+                    hitJudgment(i,j);
                 }
         	}
-        	nineball.ball[i].setPosition();
+            nineball.ball[i].setPosition();
         	nineball.ball[i].Draw();
         	nineball.ball[i].Physics();
         	glPopMatrix();
@@ -343,7 +365,7 @@ void key(unsigned char key, int x, int y){
 		case 'e':
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                 GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
-                shotPower= 1.2f;
+                shotPower= 2.0f;
                 nineball.ball[0].setPower(shotPower);
                 nineball.ball[0].setVectorPower(unitVec);
                 moveBall = true;
@@ -402,7 +424,7 @@ void timer(int value) {
     //画面を再描写
     glutPostRedisplay();
     ///30ミリ秒後に再実行
-    glutTimerFunc(30, timer, 0);
+    glutTimerFunc(10, timer, 0);
 }
 
 //メインスレッド
@@ -412,7 +434,7 @@ int main(int argc, char *argv[]){
     glutCreateWindow(argv[0]);
   	glutDisplayFunc(display);
     //30ミリ秒後に timer() を実行
-    glutTimerFunc(30, timer, 0);
+    glutTimerFunc(10, timer, 0);
     glutReshapeFunc(resize);
   	glutKeyboardFunc(key);
   	init();

@@ -2,7 +2,7 @@
 #include <math.h>
 #pragma once
 
-class KumaEngine{
+class Engine{
 public:
     static void UnitVector(GLfloat point1[],GLfloat point2[], GLfloat *p){
         GLfloat pp[] = { (float)(point1[0] - point2[0]), (float)(point1[1] - point2[1]), (float)(point1[2] - point2[2]) };

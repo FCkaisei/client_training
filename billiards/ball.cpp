@@ -67,9 +67,9 @@ public:
     }
     
     void setPosition(){
-        position->x = position->x + vector[0];
-        position->y = position->y + vector[1];
-        position->z = position->z + vector[2];
+        position->x = position->x + vector[0] * 0.3;
+        position->y = position->y + vector[1] * 0.3;
+        position->z = position->z + vector[2] * 0.3;
     }
     
     void setPositionPro(float x, float y, float z){
@@ -84,6 +84,13 @@ public:
         *p = vector[1];
         ++p;
         *p = vector[2];
+    }
+    
+    GLfloat getVector_x(){
+        return vector[0];
+    }
+    GLfloat getVector_z(){
+        return vector[0];
     }
     
     void setPosition(float x, float y, float z){
