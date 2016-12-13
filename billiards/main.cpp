@@ -45,7 +45,6 @@ void idle(void){
 
 //ゲームのステートを変更します。
 void gameState(){
-    //全ての弾が止まったらカメラモードを変更
     GLfloat ballVec[] = {0.0,0.0,0.0};
     nineball.ball[0].getVec(ballVec);
     
@@ -94,7 +93,7 @@ void gameState(){
     }else{
         
         gameStateLabel = "MOVE";
-        GLfloat cameraPosition[] = {0.0,80.0,0.0};
+        GLfloat cameraPosition[] = {20.0,80.0,0.0};
         cameraObj.createView(cameraPosition);
     }
     
@@ -303,13 +302,16 @@ void display2D(string str, double x, double y,double z){
 
 void create2DLabel(){
     std::string str;
-    //弾の数だけ作っちゃおう
+    //玉の上に玉の番号を表示してあげます
     for(int i = 0; i < ballNum; i++){
         
-        glPushMatrix();
-        str = std::to_string(nineball.ball[i].getId());
-        display2D(str,nineball.ball[i].getPosition_x(),1,nineball.ball[i].getPosition_z());
-        glPopMatrix();
+        if(nineball.ball[i].is_Existence){
+            //glPushMatrixとglPopMatrixはニコイチなのでインデントを下げます
+            glPushMatrix();
+            	str = std::to_string(nineball.ball[i].getId());
+        		display2D(str,nineball.ball[i].getPosition_x(),1,nineball.ball[i].getPosition_z());
+            glPopMatrix();
+        }
     }
 
     // 平行投影にする
