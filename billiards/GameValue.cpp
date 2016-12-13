@@ -6,3 +6,5 @@ float rsin;
 float shotPower;
 int score;
 int combo;
+
+int ballNum = 10;

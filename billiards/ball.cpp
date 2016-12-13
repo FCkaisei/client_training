@@ -17,6 +17,7 @@ public:
     double power = 0;
     GLfloat vector[3] = { 0.0,0.0,0.0 };
     GLfloat color[4] = {1.0,1.0,1.0,1.0};
+    bool is_move = false;
     bool is_Existence = true;
     //玉の番号を付与
     void setId(int id){
@@ -57,13 +58,24 @@ public:
     }
     
     void Physics(){
-        power = power *0.99f;
-        if(power < 0.1f){
-            power = 0;
+        vector[0] =vector[0] * 0.98f;
+        vector[1] =vector[1] * 0.98f;
+        vector[2] =vector[2] * 0.98f;
+        if(std::abs(vector[0]) < 0.01){
+            
+            if(std::abs(vector[2]) < 0.01){
+                vector[0] = 0;
+                vector[1] = 0;
+                vector[2] = 0;
+                is_move  =false;
+            }
+            else{
+                is_move  =true;
+            }
         }
-        vector[0] =vector[0]*0.98;
-        vector[1] =vector[1]*0.98;
-        vector[2] =vector[2]*0.98;
+        else{
+            is_move = true;
+        }
     }
     
     void setPosition(){
@@ -71,6 +83,19 @@ public:
         position->y = position->y + vector[1] * 0.3;
         position->z = position->z + vector[2] * 0.3;
     }
+    
+    GLfloat getPosition_x(){
+        return position->x;
+    }
+    
+    GLfloat getPosition_y(){
+        return position->y;
+    }
+    
+    GLfloat getPosition_z(){
+        return position->z;
+    }
+    
     
     void setPositionPro(float x, float y, float z){
         vector[0] = x;
@@ -155,20 +180,27 @@ public:
     void inPocket(){
         printf("pockets IN");
         is_Existence = false;
+        is_move = false;
+        vector[0] = 0.0f;
+        vector[1] = 0.0f;
+        vector[2] = 0.0f;
         score += combo * m_id;
     }
     
     //穴に当たったときの挙動
     void collisionPockets(){
+        
         //左上Pocket
-        if(position -> x > -2.0f && position -> x < 0.0f){
-            if(position -> z < 0.0f){
+        if(position -> x > -2.0f && position -> x < 2.0f){
+            
+            if(position -> z < 2.0f){
                 inPocket();
             }
-            else if(position -> z > 20.0f){
+            else if(position -> z > 18.0f){
                 inPocket();
             }
         }
+        
         
         if(position -> x > 19.0f && position -> x < 22.0f){
             if(position -> z < 0.0f){
@@ -179,11 +211,11 @@ public:
             }
         }
         
-        if(position -> x > 40.0f && position -> x < 42.0f){
-            if(position -> z < 0.0f){
+        if(position -> x > 38.0f && position -> x < 42.0f){
+            if(position -> z < 2.0f){
                 inPocket();
             }
-            else if(position -> z > 20.0f){
+            else if(position -> z > 18.0f){
 
                 inPocket();
             }

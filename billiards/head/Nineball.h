@@ -20,11 +20,12 @@ public:
     BallObject ballObject7;
     BallObject ballObject8;
     BallObject ballObject9;
-    BallObject ball[9];
+    BallObject ballObject10;
+    BallObject ball[10];
+    void ResetAll();
 };
-
-extern GLfloat ballPositionArray[9][4];
-extern GLfloat colorArray[9][4];
+extern GLfloat ballPositionArray[10][4];
+extern GLfloat colorArray[10][4];
 extern BallObject *ballObject1,*ballObject2,*ballObject3,*ballObject4,*ballObject5,*ballObject6,*ballObject7,*ballObject8,*ballObject9;
 
 #endif

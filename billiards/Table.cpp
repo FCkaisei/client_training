@@ -8,8 +8,8 @@
 using namespace std;
 class Table{
 public:
-    PocketObject hall1,hall2,hall3,hall4,hall5,hall6;
-    PocketObject hall[6] = {hall1, hall2, hall3, hall4, hall5, hall6 };
+    PocketObject hall1,hall2,hall3,hall4,hall5,hall6,hall7,hall8,hall9,hall10,hall11,hall12,hall13,hall14;
+    PocketObject hall[14] = {hall1, hall2, hall3, hall4, hall5, hall6,hall7,hall8,hall9,hall10,hall11,hall12,hall13,hall14};
     
     BoxObject tableBase,boxObject1,boxObject2,boxObject3,boxObject4,boxObject5,boxObject6;
     BoxObject box[7] = {tableBase,boxObject1,boxObject2, boxObject3, boxObject4,boxObject5,boxObject6};
@@ -85,20 +85,38 @@ public:
         {1.0,0.7,0.0,1.0},
     };
     
+    
+    
     //hallPositon初期設定値
-    GLfloat hallPositionArray[6][4] ={
+    GLfloat hallPositionArray[14][4] ={
         //左上
         {-2.0f,-1.0f,-2.0f},
+        {0.0f,-1.0f,-2.0f},
+        {-2.0f,-1.0f,0.0f},
+        
         //↑真ん中
         {19.0f,-1.0,-2.0},
         //右上
+        {38.0,-1.0,-2.0},
         {40.0,-1.0,-2.0},
+        {40.0,-1.0,0.0},
+        
+        
         //左下
+        {0.0f,-1.0,20.0f},
+        
         {-2.0f,-1.0,20.0f},
+        {-2.0f,-1.0,18.0f},
+        
         //真ん中下
         {19.0,-1.0,20.0f},
+        
         //右下
+        {38.0,-1.0,20.0f},
         {40.0,-1.0,20.0f},
+        {40.0,-1.0,18.0f},
+        
+        
         
         
     };
@@ -109,16 +127,24 @@ public:
      */
     
     //Forms初期設定値
-    GLfloat hallFormArray[6][4] ={
+    GLfloat hallFormArray[14][4] ={
         {2.0,2.0,2.0,2.0},
 		{2.0,2.0,2.0,2.0},
         {2.0,2.0,2.0,2.0},
         {2.0,2.0,2.0,2.0},
         {2.0,2.0,2.0,2.0},
         {2.0,2.0,2.0,2.0},
+        {2.0,2.0,2.0,2.0},
+        {2.0,2.0,2.0,2.0},
+        {2.0,2.0,2.0,2.0},
+        {2.0,2.0,2.0,2.0},
+        {2.0,2.0,2.0,2.0},
+        {2.0,2.0,2.0,2.0},
+        {2.0,2.0,2.0,2.0},
+        {2.0,2.0,2.0,2.0},
     };
     
-    GLfloat hallAngleArray[6][4]{
+    GLfloat hallAngleArray[14][4]{
         {0.0,0.0,0.0,0.0},
         
         //←
@@ -130,22 +156,31 @@ public:
         {0.0,0.0,0.0,0.0},
         //↓
         {0.0,0.0,0.0,0.0},
-        
+        {0.0,0.0,0.0,0.0},
+        {0.0,0.0,0.0,0.0},
+        {0.0,0.0,0.0,0.0},
+        {0.0,0.0,0.0,0.0},
+        {0.0,0.0,0.0,0.0},
+        {0.0,0.0,0.0,0.0},
+        {0.0,0.0,0.0,0.0},
+        {0.0,0.0,0.0,0.0},
     };
     
-    GLfloat hallColorArray[6][4] ={
-        //orange
+    GLfloat hallColorArray[14][4] ={
         {0.0,1.0,0.0,1.0},
-        //orange
-        {0.0,0.0,0.0,1.0},
-        //orange
-        {0.0,0.0,0.0,1.0},
-        //orange
-        {0.0,0.0,0.0,1.0},
-        //orange
-        {0.0,0.0,0.0,1.0},
-        //orange
-        {0.0,0.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
+        {0.0,1.0,0.0,1.0},
     };
     
    void SetTable(){
@@ -177,7 +212,8 @@ public:
                             boxAngleArray[i][3]
                             );
         }
-       for(int i = 0; i< 6; i++){
+       
+       for(int i = 0; i< 14; i++){
            hall[i].setPosition(
                                hallPositionArray[i][0],
                                hallPositionArray[i][1],

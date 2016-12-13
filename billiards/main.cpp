@@ -6,8 +6,6 @@
 #include <vector>
 #include <cmath>
 #include <math.h>
-
-#include "ColorObject.cpp"
 #include "Table.cpp"
 #include "head/Nineball.h"
 #include "Engine.cpp"
@@ -21,7 +19,6 @@ NineBall nineball;
 CameraSetting cameraObj;
 LightObject light;
 Table table;
-ColorObject colorObject;
 PlayerOperationState GameManager::p_OperationState;
 PlayerOperationState_Miss GameManager::p_OperationStateMiss;
 
@@ -32,6 +29,13 @@ bool moveBall = false;
 int firstCollision = 0;
 string gameStateLabel = "now loading...";
 string gameStateLabelMiss = "--";
+
+
+string powerLabel = "__________";
+bool now_Button_e = false;
+float now_shot_power = 0.0f;
+bool Re_noowShot_power = false;
+
 char nextQ = '0';
 
 
@@ -53,15 +57,37 @@ void gameState(){
         nineball.ball[0].is_Existence = true;
     }
     
+    
+    
+    
+    bool clear = true;
+    for(int i = 1; i<ballNum; i++){
+        if(nineball.ball[i].is_Existence == true){
+            clear = false;
+        }
+    }
+    
+    if(clear){
+        GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::CLEAR);
+    }
+    
+    int moveCount = 0;
     //球が止まっているとき
-    if((ballVec[0] < 0.001 && ballVec[0] > -0.001)){
-        moveBall = false;
+    for(int i = 0; i < ballNum; i++){
+        if(!nineball.ball[i].is_move){
+            moveCount += 1;
+            
+        }
+    }
+    
+    if(moveCount >=ballNum){
+        printf("全ての球が止まった時");
         GameManager::setPlayerOperationState(PlayerOperationState::WAIT);
     }
     
+    
     //球が止まってるとき
     if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-        
         gameStateLabel = "STOP";
         cameraObj.createView(*nineball.ball[0].position);
         GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::NONE);
@@ -82,6 +108,11 @@ void gameState(){
     else if(GameManager::getPlayerOperationState_Miss() == PlayerOperationState_Miss::GOOD){
         gameStateLabelMiss = "GOOD";
     }
+    if(GameManager::getPlayerOperationState_Miss() == PlayerOperationState_Miss::CLEAR){
+        gameStateLabelMiss = "CLEAR";
+        //ここでナインボールを再度生成。　もしくは値をもとに戻して初期値に戻す
+        nineball.ResetAll();
+    }
 }
 
 double pow(double p){
@@ -96,74 +127,52 @@ void createTable(){
     
     //土台を作る
     for(int i = 0; i < 7; i++){
+        glMaterialfv(GL_FRONT,GL_DIFFUSE, table.box[i].color);
         glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, table.box[i].color);
         table.box[i].Draw();
         glPopMatrix();
     }
     
-    
-	//	ポケットを作る。（未完)
-    for(int i = 0; i < 6; i++){
+    for(int i = 0; i < 14; i++){
+        glMaterialfv(GL_FRONT,GL_DIFFUSE, table.hall[i].color);
         glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, table.hall[i].color);
         table.hall[i].Draw();
         glPopMatrix();
     }
 }
 
-
-
 // ベクトル分解
-// ballVectorと２つのballのAngle
 void Disassembly(float ball_vec_X,float ball_vec_Y,float opponet_your_Angle, GLfloat a[]){
-    
-    
     //２つの速度の合成:OK
     double speedV_mix = sqrt((ball_vec_X * ball_vec_X) + (ball_vec_Y * ball_vec_Y));
-    
-    
     //球の進行方向:OK
     double myBallDirection = atan2(ball_vec_Y, ball_vec_X);
-    
-    
     //衝突後相手球の進行方向」に対する「自球衝突前進行方向」の角度の差:OK
     double Angle_differens = myBallDirection - opponet_your_Angle;
-    
-    
     //衝突後の相手の弾の速度:OK
     float speedV1 = abs(speedV_mix * cos(Angle_differens));
-    
     //衝突後の自分の弾の速度:OK
     float speedV2 = abs(speedV_mix * sin(Angle_differens));
-    
-    
     //衝突後の相手の球のX速度:OK
     float opponentSpeedVx = -speedV1*cos(opponet_your_Angle);
     //Y速度:OK
     float opponentSpeedVy = -speedV1*sin(opponet_your_Angle);
-    
     float Uxs;
     float Uys;
-    if(sin(Angle_differens)<0){
-        Uxs=speedV2 * cos(opponet_your_Angle - M_PI/2);//衝突後の自球のx速度
-        
-        Uys=speedV2*sin(opponet_your_Angle - M_PI/2);//衝突後の自球のy速度
+    //自分の弾の速度
+    if(sin(Angle_differens) < 0){
+        Uxs = speedV2 * cos(opponet_your_Angle - M_PI/2);//衝突後の自球のx速度
+        Uys = speedV2 * sin(opponet_your_Angle - M_PI/2);//衝突後の自球のy速度
     } else{
-        Uxs=speedV2*cos(opponet_your_Angle + M_PI/2);//衝突後の自球のx速度
-        
-        Uys=speedV2*sin(opponet_your_Angle + M_PI/2);//衝突後の自球のy速度
-
+        Uxs = speedV2 * cos(opponet_your_Angle + M_PI/2);//衝突後の自球のx速度
+        Uys = speedV2 * sin(opponet_your_Angle + M_PI/2);//衝突後の自球のy速度
     }
+    
     a[0] = Uxs;
     a[1] = Uys;
     a[2] = opponentSpeedVx;
     a[3] = opponentSpeedVy;
 }
-
-
-
-
 
 //衝突判定
 void hitJudgment(int i, int j){
@@ -181,36 +190,33 @@ void hitJudgment(int i, int j){
     float y2 = nineball.ball[j].position->y;
     float z2 = nineball.ball[j].position->z;
     
+    
+    //当たり判定
     if(pow(x1 - x2) + pow(y1 - y2) + pow(z1 - z2) <= pow(nineball.ball[i].width + nineball.ball[j].width)){
         if(moveBall && nineball.ball[i].getId() == 0){
             moveBall =false;
+            printf("はいった");
             if(firstCollision != nineball.ball[j].getId()){
+                printf("FAL");
                 //フォルスだったとき！！
                 GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::FAL);
-                
                 combo = 0;
-                
             }
             else{
                 combo += 2;
                 printf("GOOD%i",nineball.ball[i].getId());
-                
                 printf("GOOD%i",firstCollision);
                 printf("SUCCESS\n");
                 GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::GOOD);
             }
         }
         
-        //接触ファンクション
-        //衝突後の速度を出す
-        
-        GLfloat tmpHoge[] ={0.0f,0.0f,0.0f,0.0f};
-        GLfloat tmpHoge2[] ={0.0f,0.0f,0.0f,0.0f};
         //分解中身
         double kaku0 = atan2((z1 - z2),(x1 - x2));
         double kaku00 = atan2((z2 - z1),(x2 - x1));
+        GLfloat tmpHoge[] ={0.0f,0.0f,0.0f,0.0f};
+        GLfloat tmpHoge2[] ={0.0f,0.0f,0.0f,0.0f};
         
-        printf("AT:%f\n",kaku0);
         Disassembly(nineball.ball[i].getVector_x(), nineball.ball[i].getVector_z() , kaku0, tmpHoge);
         Disassembly(nineball.ball[j].getVector_x(), nineball.ball[j].getVector_z() , kaku00, tmpHoge2);
         
@@ -222,6 +228,7 @@ void hitJudgment(int i, int j){
             tmpHoge[3]+tmpHoge2[1]
         };
         
+        
         //ベクトルのセットって言うか更新
         nineball.ball[i].setPositionPro(tmpHoge3[0],0.0f,tmpHoge3[1]);
         nineball.ball[i].setPosition();
@@ -232,11 +239,11 @@ void hitJudgment(int i, int j){
 
 
 //9つのボールを生成します
-void  createNineBall(void){
-    for(int i = 0; i < 9; i++){
+void createNineBall(void){
+    for(int i = 0; i < ballNum; i++){
         //自玉の時は別途処理を追加
         if(i == 0){
-            for(int j = 9; j>0; j--){
+            for(int j = ballNum; j>0; j--){
                 
                 //はじめに当たることが許されている玉
                 if(nineball.ball[j].is_Existence){
@@ -252,20 +259,20 @@ void  createNineBall(void){
     
     
         if(nineball.ball[i].is_Existence){
-        	glPushMatrix();
-        	//色決め
         	glMaterialfv(GL_FRONT, GL_DIFFUSE, nineball.ball[i].color);
-        
+            glPushMatrix();
+        	//色決め
             nineball.ball[i].collisionPockets();
         	//壁当たり判定チェック
         	nineball.ball[i].collisionDetectionBox();
         
         	//弾の数だけ弾同士の当たり判定チェック
-        	for(int j = i; j < 9; j++){
+        	for(int j = i; j < ballNum; j++){
                 if(nineball.ball[j].is_Existence){
                     hitJudgment(i,j);
                 }
         	}
+            
             nineball.ball[i].setPosition();
         	nineball.ball[i].Draw();
         	nineball.ball[i].Physics();
@@ -274,8 +281,8 @@ void  createNineBall(void){
     }
 }
 
+
 void display2D(string str, double x, double y){
-    // WAIT
     glRasterPos2f(x, y);
     int size = (int)str.size();
     for(int i = 0; i < size; ++i){
@@ -284,23 +291,43 @@ void display2D(string str, double x, double y){
     }
 }
 
+void display2D(string str, double x, double y,double z){
+    // WAIT
+    glRasterPos3d(x, y, z);
+    int size = (int)str.size();
+    for(int i = 0; i < size; ++i){
+        char ic = str[i];
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ic);
+    }
+}
 
 void create2DLabel(){
+    std::string str;
+    //弾の数だけ作っちゃおう
+    for(int i = 0; i < ballNum; i++){
+        
+        glPushMatrix();
+        str = std::to_string(nineball.ball[i].getId());
+        display2D(str,nineball.ball[i].getPosition_x(),1,nineball.ball[i].getPosition_z());
+        glPopMatrix();
+    }
+
     // 平行投影にする
     glMatrixMode(GL_PROJECTION);
+    
     glPushMatrix();
     glLoadIdentity();
     gluOrtho2D(1, 1, 1, 1);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
+    str = std::to_string(firstCollision);
     
-    display2D(gameStateLabel, -0.9,0.9);
     
-    std::string str = std::to_string(firstCollision);
+    //次に落とすべき玉
     str = "NEXT:"+str;
-    
     display2D(str,0.5, 0.8);
+    
     
     // ゲームの結果
     display2D(gameStateLabelMiss,0.0,0.0);
@@ -308,15 +335,14 @@ void create2DLabel(){
     // スコアを表示
     str = std::to_string(score);
     str = "score:"+str;
-    display2D(str,0.5f, -0.8f);
+    display2D(str,-0.9f, 0.8f);
     
-    // コンボ数
-    str = std::to_string(combo);
-    str = "magnification::"+str;
-    display2D(str,-0.9,-0.8);
+    
+    display2D(powerLabel,-1,-0.8);
     
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
+    
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
 
@@ -353,23 +379,36 @@ void key(unsigned char key, int x, int y){
 		case 'q':
 		glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-                ballAngle += 0.05f;
+                ballAngle += 0.04f;
             }
 			break;
 		case 'w':
 		glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-                ballAngle -= 0.05;
+                ballAngle -= 0.04;
             }
 			break;
 		case 'e':
-            if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-                GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
-                shotPower= 2.0f;
-                nineball.ball[0].setPower(shotPower);
-                nineball.ball[0].setVectorPower(unitVec);
-                moveBall = true;
-                firstCollision = 0;
+            if(!now_Button_e){
+            	if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
+                    now_Button_e = true;
+            	}
+            }
+            
+            else{
+            	if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
+                    GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
+                    shotPower= 5.0f;
+                    nineball.ball[0].setPower(now_shot_power/3);
+                    nineball.ball[0].setVectorPower(unitVec);
+                    moveBall = true;
+                    firstCollision = 0;
+                    now_Button_e = false;
+                    powerLabel = "power:";
+                    now_shot_power = 0;
+                    Re_noowShot_power = false;
+                    nineball.ball[0].is_move = true;
+                }
             }
             break;
 
@@ -384,20 +423,35 @@ void key(unsigned char key, int x, int y){
 
 //初期化
 void init(void){
-    nineball.ball[0].setForm(0.5f,16.0f,16.0f);
-    nineball.ball[0].setPosition(7.5,0.0,7.5);
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_FRONT);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, colorObject.white);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, colorObject.white);
 }
 
-/* 100ミリ秒ごとに実行される関数 */
+/* 30ミリ秒ごとに実行される関数 */
 void timer(int value) {
+    
+    //パワーゲージ管理
+    if(now_Button_e){
+        powerLabel = "power:";
+        if(!Re_noowShot_power){
+        	now_shot_power += 0.5f;
+            if(now_shot_power > 30){
+                Re_noowShot_power = true;
+            }
+        }
+        else{
+            now_shot_power -= 0.5f;
+            if(now_shot_power < 1.0f){
+                Re_noowShot_power = false;
+            }
+        }
+        for(float i = 0; i < now_shot_power; i++){
+        	powerLabel += "|";
+        }
+    }
     
     /* 正方形のサイズを増加 */
     glLoadIdentity();
@@ -406,10 +460,10 @@ void timer(int value) {
     
     //gameStateを管理する予定
     gameState();
-    
     //Lightを生成
     light.createLight();
     
+    //2D系のラベルを整理します
     create2DLabel();
     
     //土台生成
@@ -424,7 +478,7 @@ void timer(int value) {
     //画面を再描写
     glutPostRedisplay();
     ///30ミリ秒後に再実行
-    glutTimerFunc(10, timer, 0);
+    glutTimerFunc(30, timer, 0);
 }
 
 //メインスレッド
@@ -434,7 +488,7 @@ int main(int argc, char *argv[]){
     glutCreateWindow(argv[0]);
   	glutDisplayFunc(display);
     //30ミリ秒後に timer() を実行
-    glutTimerFunc(10, timer, 0);
+    glutTimerFunc(30, timer, 0);
     glutReshapeFunc(resize);
   	glutKeyboardFunc(key);
   	init();

@@ -14,6 +14,8 @@ extern float shotPower;
 //score
 extern int score;
 
+extern int ballNum;
+
 //弾を連続で落としたときのコンボ
 extern int combo;
 
