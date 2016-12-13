@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 #include <math.h>
+
 #include "Table.cpp"
 #include "head/Nineball.h"
 #include "Engine.cpp"
@@ -16,10 +17,12 @@
 #include "head/GameValue.h"
 #include "head/Label2D.h"
 
+
 NineBall nineball;
 CameraSetting cameraObj;
 LightObject light;
 Table table;
+Label2D label2d;
 PlayerOperationState GameManager::p_OperationState;
 PlayerOperationState_Miss GameManager::p_OperationStateMiss;
 
@@ -73,19 +76,16 @@ void hitJudgment(int i, int j){
     if(i == j){
         return;
     }
+    float myBall_x = nineball.ball[i].position->x;
+    float myBall_y = nineball.ball[i].position->y;
+    float myBall_z = nineball.ball[i].position->z;
     
-    float x1 = nineball.ball[i].position->x;
-    float y1 = nineball.ball[i].position->y;
-    float z1 = nineball.ball[i].position->z;
-    
-    float x2 = nineball.ball[j].position->x;
-    float y2 = nineball.ball[j].position->y;
-    float z2 = nineball.ball[j].position->z;
-    
-    
+    float otherBall_x = nineball.ball[j].position->x;
+    float otherBall_y = nineball.ball[j].position->y;
+    float otherBall_z = nineball.ball[j].position->z;
     
     //当たり判定
-    if(Engine::pow(x1 - x2) + Engine::pow(y1 - y2) + Engine::pow(z1 - z2) <= Engine::pow(nineball.ball[i].width + nineball.ball[j].width)){
+    if(Engine::pow(myBall_x - otherBall_x) + Engine::pow(myBall_y - otherBall_y) + Engine::pow(myBall_z - otherBall_z) <= Engine::pow(nineball.ball[i].width + nineball.ball[j].width)){
         
         if(nineball.ball[i].getId() == 0 && nineball.ball[i].is_move){
             printf("はいった");
@@ -105,8 +105,8 @@ void hitJudgment(int i, int j){
         }
         
         //分解中身
-        double kaku0 = atan2((z1 - z2),(x1 - x2));
-        double kaku00 = atan2((z2 - z1),(x2 - x1));
+        double kaku0 = atan2((myBall_z - otherBall_z),(myBall_x - otherBall_x));
+        double kaku00 = atan2((otherBall_z - myBall_z),(otherBall_x - myBall_x));
         GLfloat tmpHoge[] ={0.0f,0.0f,0.0f,0.0f};
         GLfloat tmpHoge2[] ={0.0f,0.0f,0.0f,0.0f};
         
@@ -122,10 +122,10 @@ void hitJudgment(int i, int j){
         };
         
         //ベクトルのセットって言うか更新
-        nineball.ball[i].setPositionPro(tmpHoge3[0],0.0f,tmpHoge3[1]);
-        nineball.ball[i].setPosition();
-        nineball.ball[j].setPositionPro(tmpHoge3[2],0.0f,tmpHoge3[3]);
-        nineball.ball[j].setPosition();
+        nineball.ball[i].setVector(tmpHoge3[0],0.0f,tmpHoge3[1]);
+        nineball.ball[i].movePosition();
+        nineball.ball[j].setVector(tmpHoge3[2],0.0f,tmpHoge3[3]);
+        nineball.ball[j].movePosition();
     }
 }
 
@@ -163,7 +163,7 @@ void createNineBall(void){
                 }
         	}
             
-            nineball.ball[i].setPosition();
+            nineball.ball[i].movePosition();
         	nineball.ball[i].Draw();
         	nineball.ball[i].Physics();
         	glPopMatrix();
@@ -171,40 +171,20 @@ void createNineBall(void){
     }
 }
 
-//2Dディスプレイ西洋Object作っていいかも
-void display2D(string str, double x, double y){
-    glRasterPos2f(x, y);
-    int size = (int)str.size();
-    for(int i = 0; i < size; ++i){
-        char ic = str[i];
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ic);
-    }
-}
 
-void display2D(string str, double x, double y,double z){
-    // WAIT
-    glRasterPos3d(x, y, z);
-    int size = (int)str.size();
-    for(int i = 0; i < size; ++i){
-        char ic = str[i];
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ic);
-    }
-}
-
+//2Dラベルを生成します。
 void create2DLabel(){
     std::string str;
     //玉の上に玉の番号を表示してあげます
     for(int i = 0; i < ballNum; i++){
-        
         if(nineball.ball[i].is_Existence){
-            //glPushMatrixとglPopMatrixはニコイチなのでインデントを下げます
             glPushMatrix();
-            	str = std::to_string(nineball.ball[i].getId());
-        		display2D(str,nineball.ball[i].getPosition_x(),1,nineball.ball[i].getPosition_z());
+            str = std::to_string(nineball.ball[i].getId());
+            label2d.display2D(str,nineball.ball[i].getPosition_x(),1,nineball.ball[i].getPosition_z());
             glPopMatrix();
         }
     }
-
+    
     // 平行投影にする
     glMatrixMode(GL_PROJECTION);
     
@@ -214,28 +194,26 @@ void create2DLabel(){
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    str = std::to_string(firstCollision);
-    
     
     //次に落とすべき玉
+    str = std::to_string(firstCollision);
     str = "NEXT:"+str;
-    display2D(str,0.5, 0.8);
-    
+    label2d.display2D(str,0.5, 0.8);
     
     // ゲームの結果
-    display2D(gameStateLabelMiss,0.0,0.0);
+    label2d.display2D(gameStateLabelMiss,0.0,0.0);
     
     // スコアを表示
     str = std::to_string(score);
     str = "score:"+str;
-    display2D(str,-0.9f, 0.8f);
+    label2d.display2D(str,-0.9f, 0.8f);
     
+    // ショットパワーを表示
+    label2d.display2D(powerLabel,-1,-0.8);
     
-    display2D(powerLabel,-1,-0.8);
     
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
-    
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
 }
@@ -250,7 +228,6 @@ void display(void){
 
 //ウィンドウの比率の固定などに利用
 void resize(int w, int h){
-
     glViewport(0,0,w,h);
 	//透視変換行列の設定
 	glMatrixMode(GL_PROJECTION);
@@ -260,21 +237,20 @@ void resize(int w, int h){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(3.0f, 4.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
 }
 
 
 //キーボード入力を管理
 void key(unsigned char key, int x, int y){
-	switch (key) {
-		case 'q':
-		glutIdleFunc(idle);
+    switch (key) {
+        case 'q':
+            glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                 ballAngle += 0.04f;
             }
 			break;
 		case 'w':
-		glutIdleFunc(idle);
+			glutIdleFunc(idle);
             if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                 ballAngle -= 0.04;
             }
@@ -285,7 +261,6 @@ void key(unsigned char key, int x, int y){
                     now_Button_e = true;
             	}
             }
-            
             else{
             	if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                     GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
@@ -301,9 +276,8 @@ void key(unsigned char key, int x, int y){
                 }
             }
             break;
-		}
+    }
 }
-
 
 
 void powerGaugeManager(){
@@ -365,23 +339,24 @@ void CheckBallMoving(){
     }
 }
 
-
-//初期化
 void init(void){
     //色を浄化、背景色を設定していないためこの入力が背景色となる
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-    
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_FRONT);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 }
 
-/* 30ミリ秒ごとに実行される関数 */
+
+/* 	一定間隔で実行される関数
+ 	ゲームの大きな処理はここで管理しています。
+ */
 void timer(int value) {
     
     //パワーゲージを管理
     powerGaugeManager();
+    
     /* 正方形のサイズを増加 */
     glLoadIdentity();
     rcos = cos(ballAngle)*15;
@@ -414,7 +389,6 @@ void timer(int value) {
     glutTimerFunc(30, timer, 0);
 }
 
-//メインスレッド
 int main(int argc, char *argv[]){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH);

@@ -5,14 +5,11 @@
 #pragma once
 
 class BallAbstract: public ObjectAbs{
-    
-    
 public:
     Vector *position;
     float width = 0;
     float height = 0;
     float depth = 0;
-    
     virtual void setPower(double d) = 0;
     
     virtual void setPosition(float x, float y, float z) = 0;

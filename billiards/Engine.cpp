@@ -1,7 +1,5 @@
 #include <GLUT/GLUT.h>
 #include <math.h>
-#pragma once
-
 class Engine{
 public:
     static void UnitVector(GLfloat point1[],GLfloat point2[], GLfloat *p){
@@ -14,8 +12,6 @@ public:
         ++p;
         *p = pp2[2];
     }
-    
-    //
     static double pow(double p){
         p = p * p;
         return p;

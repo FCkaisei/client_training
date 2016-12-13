@@ -4,7 +4,6 @@
 #include "objectAbstract.cpp"
 #include "BoxObject.cpp"
 #include "PocketObject.cpp"
-#pragma once
 using namespace std;
 class Table{
 public:

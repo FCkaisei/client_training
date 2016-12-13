@@ -6,6 +6,8 @@
 /*
  Gameで共有して持っておきたい情報をまとめています.
  */
+
+
 extern float ballAngle;
 extern float rcos;
 extern float rsin;

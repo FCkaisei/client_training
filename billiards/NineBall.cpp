@@ -66,7 +66,6 @@ NineBall::NineBall(){
     ballObject8 = *new BallObject;
     ballObject9 = *new BallObject;
     ballObject10 = *new BallObject;
-    
     BallObject balla[10] = {ballObject1,ballObject2,ballObject3,ballObject4,ballObject5,ballObject6,ballObject7,ballObject8,ballObject9,ballObject10};
     for(int i = 0; i<ballNum; i++){
         ball[i] = balla[i];

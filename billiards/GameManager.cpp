@@ -9,7 +9,7 @@ enum class PlayerOperationState{
 };
 
 enum class PlayerOperationState_Miss{
-	NONE,
+    NONE,
     FAL,
     GOOD,
     CLEAR,
@@ -22,7 +22,7 @@ private:
     static PlayerOperationState_Miss p_OperationStateMiss;
     
 public:
-
+    
     static PlayerOperationState getPlayerOperationState(){
         return p_OperationState;
     }
