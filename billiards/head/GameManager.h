@@ -10,6 +10,7 @@ public:
     extern void setPlayerOperationState(PlayerOperationState p_Ope);
     extern void setPlayerOperationState_Miss(PlayerOperationState_Miss p_Ope);
     extern PlayerOperationState_Miss getPlayerOperationState_Miss();
+    extern void CheckAllGameState();
 }
 
 #endif

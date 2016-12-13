@@ -242,4 +242,20 @@ public:
            
        }
     }
+    void CreateTable(){
+        //土台を作る
+        for(int i = 0; i < 7; i++){
+            glMaterialfv(GL_FRONT,GL_DIFFUSE, box[i].color);
+            glPushMatrix();
+            box[i].Draw();
+            glPopMatrix();
+        }
+        
+        for(int i = 0; i < 14; i++){
+            glMaterialfv(GL_FRONT,GL_DIFFUSE, hall[i].color);
+            glPushMatrix();
+            hall[i].Draw();
+            glPopMatrix();
+        }
+    }
 };

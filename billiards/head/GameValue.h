@@ -15,8 +15,10 @@ extern float shotPower;
 extern int score;
 
 extern int ballNum;
-
+extern int firstCollision;
 //弾を連続で落としたときのコンボ
 extern int combo;
-
+extern std::string gameStateLabel;
+extern std::string gameStateLabelMiss;
+extern std::string powerLabel;
 #endif
