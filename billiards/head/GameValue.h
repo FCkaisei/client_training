@@ -23,4 +23,11 @@ extern int combo;
 extern std::string gameStateLabel;
 extern std::string gameStateLabelMiss;
 extern std::string powerLabel;
+
+
+extern float material_ambient[4];
+extern float material_diffuse[4];
+extern float material_specular[4];
+extern float material_shinness;
+
 #endif

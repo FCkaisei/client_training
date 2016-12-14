@@ -30,9 +30,11 @@ GLfloat p_position[] = { 0.0,0.0,0.0 };
 GLfloat unitVec[] = { 0.0,0.0,0.0 };
 
 float now_shot_power = 0.0f;
-
+bool is_AllStop = false;
 bool now_Button_e = false;
 bool Re_noowShot_power = false;
+
+
 
 void idle(void){
   glutPostRedisplay();
@@ -41,11 +43,9 @@ void idle(void){
 //ゲームのステートを変更します。
 void gameState(){
     if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
-        gameStateLabel = "STOP";
         cameraObj.createView(*nineball.ball[0].position);
         GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::NONE);
     }else{
-        gameStateLabel = "MOVE";
         GLfloat cameraPosition[] = {20.0,80.0,0.0};
         cameraObj.createView(cameraPosition);
     }
@@ -71,8 +71,9 @@ void createTable(){
     table.CreateTable();
 }
 
-//衝突判定
+//球同士の衝突判定
 void hitJudgment(int i, int j){
+    
     if(i == j){
         return;
     }
@@ -86,12 +87,8 @@ void hitJudgment(int i, int j){
     
     //当たり判定
     if(Engine::pow(myBall_x - otherBall_x) + Engine::pow(myBall_y - otherBall_y) + Engine::pow(myBall_z - otherBall_z) <= Engine::pow(nineball.ball[i].width + nineball.ball[j].width)){
-        
         if(nineball.ball[i].getId() == 0 && nineball.ball[i].is_move){
-            printf("はいった");
             if(firstCollision != nineball.ball[j].getId()){
-                printf("FAL");
-                //フォルスだったとき！！
                 GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::FAL);
                 combo = 0;
             }
@@ -103,28 +100,29 @@ void hitJudgment(int i, int j){
                 GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::GOOD);
             }
         }
-        
         //分解中身
-        double kaku0 = atan2((myBall_z - otherBall_z),(myBall_x - otherBall_x));
-        double kaku00 = atan2((otherBall_z - myBall_z),(otherBall_x - myBall_x));
-        GLfloat tmpHoge[] ={0.0f,0.0f,0.0f,0.0f};
-        GLfloat tmpHoge2[] ={0.0f,0.0f,0.0f,0.0f};
+        double my_angleDiff = atan2((myBall_z - otherBall_z),(myBall_x - otherBall_x));
+        double Other_angleDiff = atan2((otherBall_z - myBall_z),(otherBall_x - myBall_x));
         
-        Engine::Disassembly(nineball.ball[i].getVector_x(), nineball.ball[i].getVector_z() , kaku0, tmpHoge);
-        Engine::Disassembly(nineball.ball[j].getVector_x(), nineball.ball[j].getVector_z() , kaku00, tmpHoge2);
+        
+        GLfloat tmpVec1[] ={0.0f,0.0f,0.0f,0.0f};
+        GLfloat tmpVec2[] ={0.0f,0.0f,0.0f,0.0f};
+        
+        //３番めが角度？？
+        Engine::Disassembly(nineball.ball[i].getVector_x(), nineball.ball[i].getVector_z() , my_angleDiff, tmpVec1);
+        Engine::Disassembly(nineball.ball[j].getVector_x(), nineball.ball[j].getVector_z() , Other_angleDiff, tmpVec2);
         
         //結果の合成
-        GLfloat tmpHoge3[] ={
-            tmpHoge[0]+tmpHoge2[2],
-            tmpHoge[1]+tmpHoge2[3],
-            tmpHoge[2]+tmpHoge2[0],
-            tmpHoge[3]+tmpHoge2[1]
+        GLfloat tmpVec3[] ={
+            tmpVec1[0]+tmpVec2[2],
+            tmpVec1[1]+tmpVec2[3],
+            tmpVec1[2]+tmpVec2[0],
+            tmpVec1[3]+tmpVec2[1]
         };
         
         //ベクトルのセットって言うか更新
-        nineball.ball[i].setVector(tmpHoge3[0],0.0f,tmpHoge3[1]);
-        nineball.ball[i].movePosition();
-        nineball.ball[j].setVector(tmpHoge3[2],0.0f,tmpHoge3[3]);
+        nineball.ball[i].setVector(tmpVec3[0],0.0f,tmpVec3[1]);
+        nineball.ball[j].setVector(tmpVec3[2],0.0f,tmpVec3[3]);
         nineball.ball[j].movePosition();
     }
 }
@@ -149,6 +147,10 @@ void createNineBall(void){
         }
         
         if(nineball.ball[i].is_Existence){
+            glMaterialfv(GL_FRONT, GL_AMBIENT, material_ambient);
+            glMaterialfv(GL_FRONT, GL_SPECULAR, material_specular);
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, material_diffuse);
+            glMaterialf(GL_FRONT, GL_SHININESS, material_shinness);
         	glMaterialfv(GL_FRONT, GL_DIFFUSE, nineball.ball[i].color);
             glPushMatrix();
         	//色決め
@@ -172,20 +174,20 @@ void createNineBall(void){
 }
 
 
+
+GLfloat initColor[] = {0.0,0.0,0.0,0.0};
 //2Dラベルを生成します。
 void create2DLabel(){
     std::string str;
     //玉の上に玉の番号を表示してあげます
     for(int i = 0; i < ballNum; i++){
         if(nineball.ball[i].is_Existence){
-            glPushMatrix();
+            glMaterialfv(GL_FRONT,GL_EMISSION,nineball.ball[i].color);
             str = std::to_string(nineball.ball[i].getId());
             label2d.display2D(str,nineball.ball[i].getPosition_x(),1,nineball.ball[i].getPosition_z());
             glPopMatrix();
         }
     }
-    
-    // 平行投影にする
     glMatrixMode(GL_PROJECTION);
     
     glPushMatrix();
@@ -194,7 +196,7 @@ void create2DLabel(){
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    
+
     //次に落とすべき玉
     str = std::to_string(firstCollision);
     str = "NEXT:"+str;
@@ -211,11 +213,11 @@ void create2DLabel(){
     // ショットパワーを表示
     label2d.display2D(powerLabel,-1,-0.8);
     
-    
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
+    glMaterialfv(GL_FRONT,GL_EMISSION,initColor);
 }
 
 
@@ -264,7 +266,7 @@ void key(unsigned char key, int x, int y){
             else{
             	if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
                     GameManager::setPlayerOperationState(PlayerOperationState::SHOT);
-                    shotPower= 5.0f;
+                    
                     nineball.ball[0].setPower(now_shot_power/3);
                     nineball.ball[0].setVectorPower(unitVec);
                     firstCollision = 0;
@@ -329,7 +331,7 @@ void CheckBallMoving(){
     }
     
     if(moveCount >=ballNum){
-        printf("全ての球が止まった時");
+        
         GameManager::setPlayerOperationState(PlayerOperationState::WAIT);
         //自球がない状態の場合玉を再配置
         if(nineball.ball[0].is_Existence == false){
@@ -391,7 +393,7 @@ void timer(int value) {
 
 int main(int argc, char *argv[]){
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH);
+    //glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH);
     glutCreateWindow(argv[0]);
   	glutDisplayFunc(display);
     //30ミリ秒後に timer() を実行
