@@ -177,6 +177,14 @@ public:
         //左上Pocket
         if(position -> x > -2.0f && position -> x < 2.0f){
             
+            if(position -> z < 0.0f){
+                inPocket();
+            }
+            else if(position -> z > 20.0f){
+                inPocket();
+            }
+        }
+        if(position->x < 0.0f){
             if(position -> z < 2.0f){
                 inPocket();
             }
@@ -185,6 +193,7 @@ public:
             }
         }
         
+        //中央
         if(position -> x > 19.0f && position -> x < 22.0f){
             if(position -> z < 0.0f){
                 inPocket();
@@ -194,12 +203,21 @@ public:
             }
         }
         
+        //右Pocket
         if(position -> x > 38.0f && position -> x < 42.0f){
+            if(position -> z < 0.0f){
+                inPocket();
+            }
+            else if(position -> z > 20.0f){
+                inPocket();
+            }
+        }
+        
+        if(position->x >40){
             if(position -> z < 2.0f){
                 inPocket();
             }
-            else if(position -> z > 18.0f){
-
+            else if(position -> z > 18){
                 inPocket();
             }
         }

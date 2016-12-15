@@ -30,10 +30,9 @@ GLfloat p_position[] = { 0.0,0.0,0.0 };
 GLfloat unitVec[] = { 0.0,0.0,0.0 };
 
 float now_shot_power = 0.0f;
-bool is_AllStop = false;
 bool now_Button_e = false;
 bool Re_noowShot_power = false;
-
+bool is_SateChange = false;
 
 
 void idle(void){
@@ -43,6 +42,7 @@ void idle(void){
 //ゲームのステートを変更します。
 void gameState(){
     if(GameManager::getPlayerOperationState() == PlayerOperationState::WAIT){
+        is_SateChange = true;
         cameraObj.createView(*nineball.ball[0].position);
         GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::NONE);
     }else{
@@ -88,17 +88,16 @@ void hitJudgment(int i, int j){
     //当たり判定
     if(Engine::pow(myBall_x - otherBall_x) + Engine::pow(myBall_y - otherBall_y) + Engine::pow(myBall_z - otherBall_z) <= Engine::pow(nineball.ball[i].width + nineball.ball[j].width)){
         if(nineball.ball[i].getId() == 0 && nineball.ball[i].is_move){
-            if(firstCollision != nineball.ball[j].getId()){
-                GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::FAL);
-                combo = 0;
+            if(is_SateChange){
+            	if(firstCollision != nineball.ball[j].getId()){
+                	GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::FAL);
+                	combo = 0;
+            	} else{
+                	combo = 1;
+                	GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::GOOD);
+            	}
             }
-            else{
-                combo += 2;
-                printf("GOOD%i",nineball.ball[i].getId());
-                printf("GOOD%i",firstCollision);
-                printf("SUCCESS\n");
-                GameManager::setPlayerOperationState_Miss(PlayerOperationState_Miss::GOOD);
-            }
+            is_SateChange = false;
         }
         //分解中身
         double my_angleDiff = atan2((myBall_z - otherBall_z),(myBall_x - otherBall_x));
@@ -123,7 +122,7 @@ void hitJudgment(int i, int j){
         //ベクトルのセットって言うか更新
         nineball.ball[i].setVector(tmpVec3[0],0.0f,tmpVec3[1]);
         nineball.ball[j].setVector(tmpVec3[2],0.0f,tmpVec3[3]);
-        nineball.ball[j].movePosition();
+       
     }
 }
 
@@ -175,7 +174,7 @@ void createNineBall(void){
 
 
 
-GLfloat initColor[] = {0.0,0.0,0.0,0.0};
+GLfloat initColor[] = {0.0f,0.0f,0.0f,0.0f};
 //2Dラベルを生成します。
 void create2DLabel(){
     std::string str;
@@ -189,7 +188,6 @@ void create2DLabel(){
         }
     }
     glMatrixMode(GL_PROJECTION);
-    
     glPushMatrix();
     glLoadIdentity();
     gluOrtho2D(1, 1, 1, 1);
@@ -203,7 +201,7 @@ void create2DLabel(){
     label2d.display2D(str,0.5, 0.8);
     
     // ゲームの結果
-    label2d.display2D(gameStateLabelMiss,0.0,0.0);
+    label2d.display2D(gameStateLabelMiss,-0.2f,0.0f);
     
     // スコアを表示
     str = std::to_string(score);

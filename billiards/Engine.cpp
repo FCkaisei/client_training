@@ -17,7 +17,6 @@ public:
         return p;
     }
     
-    
     //ベクトルの分散のときに利用
     static void Disassembly(float ball_vec_X,float ball_vec_Y,float opponet_your_Angle, GLfloat a[]){
         //sqrtは平方根 9→3
@@ -45,8 +44,6 @@ public:
         
         //衝突後の自分の弾の速度:OK
         float speedV2 = fabs(speedV_mix * sin(Angle_differens));
-        
-        
         
         //衝突後の相手の球のX速度:OK
         float opponentSpeedVx = -speedV1 * cos(opponet_your_Angle);
