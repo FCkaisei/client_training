@@ -1,0 +1,348 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7305ACEF1DB67A8700AC3D0B /* GameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 731F67E41DB66B9A00363519 /* GameManager.cpp */; };
+		7305ACF11DB67D7D00AC3D0B /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7305ACF01DB67D7D00AC3D0B /* Security.framework */; };
+		7305ACF31DB67DBA00AC3D0B /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7305ACF21DB67DBA00AC3D0B /* Social.framework */; };
+		731F67E31DB3B5FA00363519 /* BallAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 731F67E21DB3B5FA00363519 /* BallAbstract.cpp */; };
+		7344E7741E008F1400242149 /* PocketObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7344E7731E008F1400242149 /* PocketObject.cpp */; };
+		7344E7761E008FF400242149 /* PocketObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7344E7751E008FF400242149 /* PocketObject.cpp */; };
+		73791C781DDAF60800CD92C6 /* LightObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73791C771DDAF60800CD92C6 /* LightObject.cpp */; };
+		73791C7E1DDB014800CD92C6 /* CameraSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73791C7D1DDB014800CD92C6 /* CameraSetting.cpp */; };
+		73AF8F0D1DB1E4FA00677203 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73AF8F0B1DB1E4FA00677203 /* GLUT.framework */; };
+		73AF8F0E1DB1E4FA00677203 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73AF8F0C1DB1E4FA00677203 /* OpenGL.framework */; };
+		73AF8F171DB1E54D00677203 /* Ball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73AF8F0F1DB1E54D00677203 /* Ball.cpp */; };
+		73AF8F181DB1E54D00677203 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73AF8F101DB1E54D00677203 /* Engine.cpp */; };
+		73AF8F191DB1E54D00677203 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73AF8F111DB1E54D00677203 /* main.cpp */; };
+		73AF8F1A1DB1E54D00677203 /* ObjectAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73AF8F121DB1E54D00677203 /* ObjectAbstract.cpp */; };
+		73AF8F1B1DB1E54D00677203 /* BoxObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73AF8F131DB1E54D00677203 /* BoxObject.cpp */; };
+		73CB092D1DC602A40004B95E /* NineBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73CB092C1DC602A40004B95E /* NineBall.cpp */; };
+		73CB092F1DCB43C70004B95E /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73CB092E1DCB43C70004B95E /* Table.cpp */; };
+		73E23B431E005EB200D61B54 /* Label2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E23B421E005EB200D61B54 /* Label2D.cpp */; };
+		73EF7E0F1DDB32E2006E3ABD /* GameValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73EF7E0E1DDB32E2006E3ABD /* GameValue.cpp */; };
+		73EF7E111DDEEF37006E3ABD /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73EF7E101DDEEF37006E3ABD /* Vector.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		73AF8EFF1DB1E4C700677203 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7305ACF01DB67D7D00AC3D0B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		7305ACF21DB67DBA00AC3D0B /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		731F67E21DB3B5FA00363519 /* BallAbstract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BallAbstract.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/BallAbstract.cpp; sourceTree = "<group>"; };
+		731F67E41DB66B9A00363519 /* GameManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameManager.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/GameManager.cpp; sourceTree = "<group>"; };
+		7344E7731E008F1400242149 /* PocketObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PocketObject.cpp; path = ../../../work/client_training/billiards/PocketObject.cpp; sourceTree = "<group>"; };
+		7344E7751E008FF400242149 /* PocketObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PocketObject.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/PocketObject.cpp; sourceTree = "<group>"; };
+		73791C761DDAEEC800CD92C6 /* head */ = {isa = PBXFileReference; lastKnownFileType = folder; name = head; path = ../../../work/colopl/client_training/sample/s11_Sphere/head; sourceTree = "<group>"; };
+		73791C771DDAF60800CD92C6 /* LightObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightObject.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/LightObject.cpp; sourceTree = "<group>"; };
+		73791C7D1DDB014800CD92C6 /* CameraSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CameraSetting.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/CameraSetting.cpp; sourceTree = "<group>"; };
+		73AF8F011DB1E4C700677203 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		73AF8F0B1DB1E4FA00677203 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		73AF8F0C1DB1E4FA00677203 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		73AF8F0F1DB1E54D00677203 /* Ball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ball.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/Ball.cpp; sourceTree = "<group>"; };
+		73AF8F101DB1E54D00677203 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Engine.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/Engine.cpp; sourceTree = "<group>"; };
+		73AF8F111DB1E54D00677203 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/main.cpp; sourceTree = "<group>"; };
+		73AF8F121DB1E54D00677203 /* ObjectAbstract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectAbstract.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/ObjectAbstract.cpp; sourceTree = "<group>"; };
+		73AF8F131DB1E54D00677203 /* BoxObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoxObject.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/BoxObject.cpp; sourceTree = "<group>"; };
+		73CB092C1DC602A40004B95E /* NineBall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NineBall.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/NineBall.cpp; sourceTree = "<group>"; };
+		73CB092E1DCB43C70004B95E /* Table.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Table.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/Table.cpp; sourceTree = "<group>"; };
+		73E23B421E005EB200D61B54 /* Label2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Label2D.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/Label2D.cpp; sourceTree = "<group>"; };
+		73EF7E0E1DDB32E2006E3ABD /* GameValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameValue.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/GameValue.cpp; sourceTree = "<group>"; };
+		73EF7E101DDEEF37006E3ABD /* Vector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vector.cpp; path = ../../../work/colopl/client_training/sample/s11_Sphere/Vector.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		73AF8EFE1DB1E4C700677203 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7305ACF31DB67DBA00AC3D0B /* Social.framework in Frameworks */,
+				7305ACF11DB67D7D00AC3D0B /* Security.framework in Frameworks */,
+				73AF8F0D1DB1E4FA00677203 /* GLUT.framework in Frameworks */,
+				73AF8F0E1DB1E4FA00677203 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		73AF8EF81DB1E4C700677203 = {
+			isa = PBXGroup;
+			children = (
+				7305ACF21DB67DBA00AC3D0B /* Social.framework */,
+				7305ACF01DB67D7D00AC3D0B /* Security.framework */,
+				73AF8F0B1DB1E4FA00677203 /* GLUT.framework */,
+				73AF8F0C1DB1E4FA00677203 /* OpenGL.framework */,
+				73AF8F031DB1E4C700677203 /* test */,
+				73AF8F021DB1E4C700677203 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		73AF8F021DB1E4C700677203 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				73AF8F011DB1E4C700677203 /* test */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		73AF8F031DB1E4C700677203 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				73AF8F0F1DB1E54D00677203 /* Ball.cpp */,
+				73AF8F101DB1E54D00677203 /* Engine.cpp */,
+				73CB092E1DCB43C70004B95E /* Table.cpp */,
+				73AF8F111DB1E54D00677203 /* main.cpp */,
+				73791C761DDAEEC800CD92C6 /* head */,
+				73AF8F121DB1E54D00677203 /* ObjectAbstract.cpp */,
+				73EF7E0E1DDB32E2006E3ABD /* GameValue.cpp */,
+				73E23B421E005EB200D61B54 /* Label2D.cpp */,
+				73AF8F131DB1E54D00677203 /* BoxObject.cpp */,
+				73791C7D1DDB014800CD92C6 /* CameraSetting.cpp */,
+				73791C771DDAF60800CD92C6 /* LightObject.cpp */,
+				73EF7E101DDEEF37006E3ABD /* Vector.cpp */,
+				7344E7751E008FF400242149 /* PocketObject.cpp */,
+				73CB092C1DC602A40004B95E /* NineBall.cpp */,
+				7344E7731E008F1400242149 /* PocketObject.cpp */,
+				731F67E41DB66B9A00363519 /* GameManager.cpp */,
+				731F67E21DB3B5FA00363519 /* BallAbstract.cpp */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		73AF8F001DB1E4C700677203 /* test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 73AF8F081DB1E4C700677203 /* Build configuration list for PBXNativeTarget "test" */;
+			buildPhases = (
+				73AF8EFD1DB1E4C700677203 /* Sources */,
+				73AF8EFE1DB1E4C700677203 /* Frameworks */,
+				73AF8EFF1DB1E4C700677203 /* CopyFiles */,
+				736698191E02D38A004D8EF9 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = test;
+			productName = test;
+			productReference = 73AF8F011DB1E4C700677203 /* test */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		73AF8EF91DB1E4C700677203 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "馬場佳世";
+				TargetAttributes = {
+					73AF8F001DB1E4C700677203 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 73AF8EFC1DB1E4C700677203 /* Build configuration list for PBXProject "test" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 73AF8EF81DB1E4C700677203;
+			productRefGroup = 73AF8F021DB1E4C700677203 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				73AF8F001DB1E4C700677203 /* test */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		736698191E02D38A004D8EF9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -a $BUILT_PRODUCTS_DIR/ $SRCROOT/bin/";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		73AF8EFD1DB1E4C700677203 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7305ACEF1DB67A8700AC3D0B /* GameManager.cpp in Sources */,
+				73AF8F1A1DB1E54D00677203 /* ObjectAbstract.cpp in Sources */,
+				73E23B431E005EB200D61B54 /* Label2D.cpp in Sources */,
+				73EF7E111DDEEF37006E3ABD /* Vector.cpp in Sources */,
+				73791C781DDAF60800CD92C6 /* LightObject.cpp in Sources */,
+				73AF8F171DB1E54D00677203 /* Ball.cpp in Sources */,
+				73EF7E0F1DDB32E2006E3ABD /* GameValue.cpp in Sources */,
+				73CB092D1DC602A40004B95E /* NineBall.cpp in Sources */,
+				73CB092F1DCB43C70004B95E /* Table.cpp in Sources */,
+				73AF8F1B1DB1E54D00677203 /* BoxObject.cpp in Sources */,
+				73791C7E1DDB014800CD92C6 /* CameraSetting.cpp in Sources */,
+				73AF8F181DB1E54D00677203 /* Engine.cpp in Sources */,
+				73AF8F191DB1E54D00677203 /* main.cpp in Sources */,
+				7344E7741E008F1400242149 /* PocketObject.cpp in Sources */,
+				7344E7761E008FF400242149 /* PocketObject.cpp in Sources */,
+				731F67E31DB3B5FA00363519 /* BallAbstract.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		73AF8F061DB1E4C700677203 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		73AF8F071DB1E4C700677203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				"INSTALL_PATH[sdk=macosx10.12]" = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		73AF8F091DB1E4C700677203 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"MTL_ENABLE_DEBUG_INFO[arch=*]" = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		73AF8F0A1DB1E4C700677203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"INFOPLIST_FILE[sdk=macosx10.12]" = "";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				"MTL_ENABLE_DEBUG_INFO[sdk=macosx10.12]" = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		73AF8EFC1DB1E4C700677203 /* Build configuration list for PBXProject "test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				73AF8F061DB1E4C700677203 /* Debug */,
+				73AF8F071DB1E4C700677203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		73AF8F081DB1E4C700677203 /* Build configuration list for PBXNativeTarget "test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				73AF8F091DB1E4C700677203 /* Debug */,
+				73AF8F0A1DB1E4C700677203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 73AF8EF91DB1E4C700677203 /* Project object */;
+}
